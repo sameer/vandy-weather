@@ -2,7 +2,7 @@ import csv
 import tarfile
 import io
 import datetime
-from typing import NamedTuple, OrderedDict, BinaryIO
+from typing import NamedTuple, OrderedDict, BinaryIO, List
 import pickle
 import os
 
@@ -51,7 +51,7 @@ class WeatherRow(NamedTuple):
             except:
                 print(f'Failed to cast for id={dct["id"]}: {field} {value} {cls.__annotations__[field]}')
                 return None
-        return new_dict
+        return cls(**new_dict)
 
 def read_from_tar(filename: str) -> BinaryIO:
     tar = tarfile.open(f'{filename}.tar.xz')
@@ -63,6 +63,7 @@ if __name__ == '__main__':
         data_str = io.TextIOWrapper(data_binary, encoding='utf-8')
         data_reader = csv.DictReader(data_str)
         weather = [WeatherRow.from_csv_dict(dct) for dct in data_reader]
+        weather = list(filter(lambda w: w is not None, weather))
         data_tar.close()
         with tarfile.open(f'{PICKLE_FILENAME}.tar.xz', 'w:xz') as pickle_tar:
             pickle_bytes = pickle.dumps(weather, pickle.HIGHEST_PROTOCOL)
@@ -72,6 +73,12 @@ if __name__ == '__main__':
             pickle_tar.addfile(pickle_tarinfo, fileobj=pickle_fobj)
 
     pickle_tar, pickle_binary = read_from_tar(PICKLE_FILENAME)
-    weather = pickle.load(pickle_binary)
+    weather: List[WeatherRow] = pickle.load(pickle_binary)
     pickle_tar.close()
-    print(weather[0])
+    time = np.empty(len(weather), dtype='object')
+    thermometer = np.empty(len(weather), dtype='float')
+    for i, w in enumerate(weather):
+        time[i] = w.time
+        thermometer[i] = w.thermometer
+    plt.plot(time, thermometer)
+    plt.show()
