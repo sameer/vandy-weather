@@ -14,6 +14,31 @@ PICKLE_FILENAME = 'vanderbilt.pickle'
 TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 class WeatherRow(NamedTuple):
+    '''
+    Id: SQL Table Key, int
+    Time: Timestamp, datetime.datetime
+    Derived: ????
+    Barometer: Inches of Mercury in. Hg
+    Barometer Tendency: Pressure Tendency  
+    Thermometer: Degrees Fahrenheit &deg;F
+    Dewpoint: Degrees Fahrenheit &deg;F
+    Heat Index: Degrees Fahrenheit &deg;F
+    Wet Bulb Globe Temperature: Degrees Fahrenheit &deg;F
+    Wind Chill: Degrees Fahrenheit &deg;F
+    Anemometer: Miles Per Hour mph
+    10 Minute Wind Gust: Miles Per Hour mph
+    Hygrometer: Percent Humidity %
+    Wind Vane: Degrees &deg;
+    Solar Radiation Sensor: Watts Per Square Meter W/m^2
+    UV Radiation Sensor: UV Index  
+    Rain Rate: Inches Per Hour in/hr
+    Rain Gauge: Inches in.
+    Turf Temperature: Degrees Fahrenheit &deg;F
+    Club Level Temperature: Degrees Fahrenheit &deg;F
+    Club Level Humidity: Percent Humidity %
+    Field Level Temperature: Degrees Fahrenheit &deg;F
+    Field Level Humidity: Percent Humidity %
+    '''
     id: int
     time: datetime.datetime
     derived: int
@@ -79,6 +104,6 @@ if __name__ == '__main__':
     thermometer = np.empty(len(weather), dtype='float')
     for i, w in enumerate(weather):
         time[i] = w.time
-        thermometer[i] = w.thermometer
+        thermometer[i] = w.barometer
     plt.plot(time, thermometer)
     plt.show()

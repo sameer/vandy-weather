@@ -1,0 +1,210 @@
+[
+    {
+        "readings": [
+            {
+                "sensor": "Barometer",
+                "unit": "Inches of Mercury",
+                "id": "14902",
+                "sensor_type": "Barometer",
+                "transmitter": "2328",
+                "unit_symbol": "in. Hg",
+                "value": null
+            },
+            {
+                "value": null,
+                "transmitter": "2328",
+                "sensor_type": "Barometer Tendency",
+                "unit_symbol": " ",
+                "id": "14904",
+                "unit": "Pressure Tendency",
+                "sensor": "Barometer Tendency"
+            },
+            {
+                "value": null,
+                "transmitter": "2331",
+                "sensor_type": "Thermometer",
+                "unit_symbol": "&deg;F",
+                "id": "14905",
+                "unit": "Degrees Fahrenheit",
+                "sensor": "Thermometer"
+            },
+            {
+                "unit": "Degrees Fahrenheit",
+                "id": "14907",
+                "sensor": "Dewpoint",
+                "value": null,
+                "unit_symbol": "&deg;F",
+                "transmitter": "2331",
+                "sensor_type": "Dewpoint"
+            },
+            {
+                "sensor_type": "Heat Index",
+                "transmitter": "2331",
+                "unit_symbol": "&deg;F",
+                "value": null,
+                "sensor": "Heat Index",
+                "id": "14910",
+                "unit": "Degrees Fahrenheit"
+            },
+            {
+                "sensor": "Wet Bulb Globe Temperature",
+                "unit": "Degrees Fahrenheit",
+                "id": "14913",
+                "sensor_type": "Wet Bulb Globe Temperature",
+                "transmitter": "2331",
+                "unit_symbol": "&deg;F",
+                "value": null
+            },
+            {
+                "sensor": "Wind Chill",
+                "id": "14916",
+                "unit": "Degrees Fahrenheit",
+                "transmitter": "2331",
+                "sensor_type": "Wind Chill",
+                "unit_symbol": "&deg;F",
+                "value": null
+            },
+            {
+                "value": null,
+                "sensor_type": "Anemometer",
+                "transmitter": "2331",
+                "unit_symbol": "mph",
+                "unit": "Miles Per Hour",
+                "id": "14919",
+                "sensor": "Anemometer"
+            },
+            {
+                "id": "14921",
+                "unit": "Miles Per Hour",
+                "sensor": "10 Minute Wind Gust",
+                "value": null,
+                "sensor_type": "10 Minute Wind Gust",
+                "transmitter": "2331",
+                "unit_symbol": "mph"
+            },
+            {
+                "sensor": "Hygrometer",
+                "id": "14922",
+                "unit": "Percent Humidity",
+                "unit_symbol": "%",
+                "transmitter": "2331",
+                "sensor_type": "Hygrometer",
+                "value": null
+            },
+            {
+                "unit": "Degrees",
+                "id": "14924",
+                "sensor": "Wind Vane",
+                "value": null,
+                "sensor_type": "Wind Vane",
+                "transmitter": "2331",
+                "unit_symbol": "&deg;"
+            },
+            {
+                "unit_symbol": "W/m^2",
+                "transmitter": "2331",
+                "sensor_type": "Solar Radiation Sensor",
+                "value": null,
+                "sensor": "Solar Radiation Sensor",
+                "id": "14927",
+                "unit": "Watts Per Square Meter"
+            },
+            {
+                "unit_symbol": " ",
+                "sensor_type": "UV Radiation Sensor",
+                "transmitter": "2331",
+                "value": null,
+                "sensor": "UV Radiation Sensor",
+                "unit": "UV Index",
+                "id": "14930"
+            },
+            {
+                "unit": "Inches Per Hour",
+                "id": "14933",
+                "sensor": "Rain Rate",
+                "value": null,
+                "sensor_type": "Rain Rate",
+                "transmitter": "2331",
+                "unit_symbol": "in/hr"
+            },
+            {
+                "value": null,
+                "unit_symbol": "in.",
+                "transmitter": "2331",
+                "sensor_type": "Rain Gauge",
+                "id": "14936",
+                "unit": "Inches",
+                "sensor": "Rain Gauge"
+            },
+            {
+                "transmitter": "2333",
+                "sensor_type": "Extra Temperature",
+                "unit_symbol": "&deg;F",
+                "value": null,
+                "sensor": "Turf Temperature",
+                "unit": "Degrees Fahrenheit",
+                "id": "14937"
+            },
+            {
+                "value": null,
+                "unit_symbol": "&deg;F",
+                "sensor_type": "Extra Temperature",
+                "transmitter": "2335",
+                "unit": "Degrees Fahrenheit",
+                "id": "14938",
+                "sensor": "Club Level Temperature"
+            },
+            {
+                "unit": "Percent Humidity",
+                "id": "14939",
+                "sensor": "Club Level Humidity",
+                "value": null,
+                "sensor_type": "Extra Humidity",
+                "transmitter": "2335",
+                "unit_symbol": "%"
+            },
+            {
+                "transmitter": "2336",
+                "sensor_type": "Extra Temperature",
+                "unit_symbol": "&deg;F",
+                "value": null,
+                "sensor": "Field Level Temperature",
+                "unit": "Degrees Fahrenheit",
+                "id": "14944"
+            },
+            {
+                "unit_symbol": "%",
+                "transmitter": "2336",
+                "sensor_type": "Extra Humidity",
+                "value": null,
+                "sensor": "Field Level Humidity",
+                "id": "14947",
+                "unit": "Percent Humidity"
+            }
+        ],
+        "derived": "0",
+        "time": null,
+        "id": "1571353"
+    },
+    {
+        "station": {
+            "lon": "-86.8089544773",
+            "wunderground": "KTNNASHV190",
+            "handle": "vanderbilt",
+            "cameras": [
+                {
+                    "image": "https://davidson.weatherstem.com/skycamera/davidson/vanderbilt/cumulus/snapshot.jpg",
+                    "name": "Cloud Camera"
+                }
+            ],
+            "name": "Vanderbilt University",
+            "lat": "36.1438357439",
+            "domain": {
+                "handle": "davidson",
+                "name": "Davidson County, Tennessee"
+            },
+            "facebook": "1958630007689667",
+            "twitter": "VUWxSTEM"
+        }
+    }
+]
