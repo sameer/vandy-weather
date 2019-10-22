@@ -15,7 +15,7 @@ TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 class WeatherRow(NamedTuple):
     id: int
-    time: str
+    time: datetime.datetime
     derived: int
     barometer: float
     barometer_tendency: str
@@ -44,7 +44,10 @@ class WeatherRow(NamedTuple):
         new_dict = {}
         for field, value in dct.items():
             try:
-                new_dict[field] = cls.__annotations__[field](value)
+                if field == 'time':
+                    new_dict[field] = datetime.datetime.strptime(value, TIME_FORMAT)
+                else:
+                    new_dict[field] = cls.__annotations__[field](value)
             except:
                 print(f'Failed to cast for id={dct["id"]}: {field} {value} {cls.__annotations__[field]}')
                 return None
