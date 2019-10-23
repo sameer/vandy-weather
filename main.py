@@ -8,6 +8,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.model_selection import TimeSeriesSplit
 
 CSV_FILENAME = 'vanderbilt.csv'
 PICKLE_FILENAME = 'vanderbilt.pickle'
@@ -105,5 +106,7 @@ if __name__ == '__main__':
     for i, w in enumerate(weather):
         time[i] = w.time
         thermometer[i] = w.barometer
-    plt.plot(time, thermometer)
-    plt.show()
+    # plt.plot(time, thermometer)
+    # plt.show()
+    print(len(time), time.shape, len(WeatherRow.__annotations__))
+    tscv = TimeSeriesSplit(n_splits=100)
