@@ -105,8 +105,22 @@ if __name__ == '__main__':
     thermometer = np.empty(len(weather), dtype='float')
     for i, w in enumerate(weather):
         time[i] = w.time
-        thermometer[i] = w.barometer
-    # plt.plot(time, thermometer)
-    # plt.show()
-    print(len(time), time.shape, len(WeatherRow.__annotations__))
-    tscv = TimeSeriesSplit(n_splits=100)
+        thermometer[i] = w.thermometer
+
+    t = np.arange(0, len(weather))
+    linear_component = np.polyfit(t, thermometer, 1)[0]
+    thermometer_without_linear = thermometer - linear_component * t
+    amplitudes = np.fft.fft(thermometer_without_linear)
+    freqs = np.fft.fftfreq(len(amplitudes))
+    indices = np.argsort(-amplitudes)
+    t = np.arange(0, len(weather) + 100000)
+    restored = np.zeros(len(t))
+    for i in indices[: 21]:
+        amplitude = np.absolute(amplitudes[i]) / len(t)
+        phase = np.angle(amplitudes[i])
+        restored += amplitude * np.cos(2 * np.pi * freqs[i] * t + phase)
+    restored += linear_component * t
+    plt.plot(t, restored)
+    plt.plot(np.arange(0, len(thermometer)), thermometer)
+    plt.show()
+    # print(len(time), time.shape, len(WeatherRow.__annotations__))
