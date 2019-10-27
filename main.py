@@ -1,112 +1,58 @@
-import csv
-import tarfile
-import io
-import datetime
 from typing import NamedTuple, OrderedDict, BinaryIO, List
-import pickle
 import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.model_selection import TimeSeriesSplit
+import torch
+from torch import nn
+from sklearn import preprocessing
 
-CSV_FILENAME = 'vanderbilt.csv'
-PICKLE_FILENAME = 'vanderbilt.pickle'
-TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+from preprocessing import read_from_tar, TORCH_FILENAME
 
-class WeatherRow(NamedTuple):
-    '''
-    Id: SQL Table Key, int
-    Time: Timestamp, datetime.datetime
-    Derived: ????
-    Barometer: Inches of Mercury in. Hg
-    Barometer Tendency: Pressure Tendency  
-    Thermometer: Degrees Fahrenheit &deg;F
-    Dewpoint: Degrees Fahrenheit &deg;F
-    Heat Index: Degrees Fahrenheit &deg;F
-    Wet Bulb Globe Temperature: Degrees Fahrenheit &deg;F
-    Wind Chill: Degrees Fahrenheit &deg;F
-    Anemometer: Miles Per Hour mph
-    10 Minute Wind Gust: Miles Per Hour mph
-    Hygrometer: Percent Humidity %
-    Wind Vane: Degrees &deg;
-    Solar Radiation Sensor: Watts Per Square Meter W/m^2
-    UV Radiation Sensor: UV Index  
-    Rain Rate: Inches Per Hour in/hr
-    Rain Gauge: Inches in.
-    Turf Temperature: Degrees Fahrenheit &deg;F
-    Club Level Temperature: Degrees Fahrenheit &deg;F
-    Club Level Humidity: Percent Humidity %
-    Field Level Temperature: Degrees Fahrenheit &deg;F
-    Field Level Humidity: Percent Humidity %
-    '''
-    id: int
-    time: datetime.datetime
-    derived: int
-    barometer: float
-    barometer_tendency: str
-    thermometer: float
-    dewpoint: float
-    heat_index: float
-    wet_bulb_globe_temperature: float
-    wind_chill: float
-    anemometer: int
-    ten_minute_wind_gust: int
-    hygrometer: int
-    wind_vane: int
-    solar_radiation: int
-    uv_radiation: int
-    rain_rate: float
-    rain_gauge: float
-    turf_temperature: str
-    club_level_temperature: str
-    club_level_humidity: str
-    field_level_temperature: str
-    field_level_humidity: str
 
-    @classmethod
-    def from_csv_dict(cls: 'WeatherRow', dct: OrderedDict[str, str]) -> dict:
-        """ Convert a weather dict read with DictReader to correct types as WeatherRow."""
-        new_dict = {}
-        for field, value in dct.items():
-            try:
-                if field == 'time':
-                    new_dict[field] = datetime.datetime.strptime(value, TIME_FORMAT)
-                else:
-                    new_dict[field] = cls.__annotations__[field](value)
-            except:
-                print(f'Failed to cast for id={dct["id"]}: {field} {value} {cls.__annotations__[field]}')
-                return None
-        return cls(**new_dict)
+class WeatherLSTM(nn.Module):
+    def __init__(self, window_size: int, input_dim: int = 1, hidden_dim: int = 51, bidirectional: bool = False):
+        super().__init__()
+        self.window_size = window_size
+        self.input_dim = input_dim
+        self.hidden_dim = hidden_dim
+        self.bidirectional = int(bidirectional) + 1
+        self.lstm = nn.LSTM(1, hidden_dim, 2)
+        self.linear = nn.Linear(hidden_dim, 1)
+    
+    def initialize(self):
+        '''
+        hidden_state / cell_state: (num_layers * num_directions, window_size, hidden_size)
+        '''
+        shape = (2 * self.bidirectional, self.window_size, self.hidden_dim)
+        self.hidden = (torch.zeros(shape), torch.zeros(shape))
+    
+    def forward(self, inp):
+        '''
+        inp: (num_samples, window_size, num_features)
+        out: (num_samples, prediction (1), num_features)
+        '''
+        # outputs = []
+        # for sample in input.chunk(input.size(0), dim=0):
+        #     output, (self.hidden_state, self.cell_state) = self.lstm(sample, (self.hidden_state, self.cell_state))
+        #     output = self.linear(output)
+        #     outputs += [output]
+        # print(outputs[0].shape)
+        # outputs = torch.stack(outputs, 1).squeeze(2)
+        # print(outputs.shape)
+        out, hidden = self.lstm(inp, self.hidden)
+        print(out.shape)
+        
+        out = self.linear(out[:, -1, :])
+        print(out.shape)
+        return out
 
-def read_from_tar(filename: str) -> BinaryIO:
-    tar = tarfile.open(f'{filename}.tar.xz')
-    return (tar, tar.extractfile(tar.getmember(filename)))
 
 if __name__ == '__main__':
-    if not os.path.isfile(f'{PICKLE_FILENAME}.tar.xz'):
-        data_tar, data_binary = read_from_tar(CSV_FILENAME)
-        data_str = io.TextIOWrapper(data_binary, encoding='utf-8')
-        data_reader = csv.DictReader(data_str)
-        weather = [WeatherRow.from_csv_dict(dct) for dct in data_reader]
-        weather = list(filter(lambda w: w is not None, weather))
-        data_tar.close()
-        with tarfile.open(f'{PICKLE_FILENAME}.tar.xz', 'w:xz') as pickle_tar:
-            pickle_bytes = pickle.dumps(weather, pickle.HIGHEST_PROTOCOL)
-            pickle_tarinfo = tarfile.TarInfo(PICKLE_FILENAME)
-            pickle_tarinfo.size = len(pickle_bytes)
-            pickle_fobj = io.BytesIO(pickle_bytes)
-            pickle_tar.addfile(pickle_tarinfo, fileobj=pickle_fobj)
-
-    pickle_tar, pickle_binary = read_from_tar(PICKLE_FILENAME)
-    weather: List[WeatherRow] = pickle.load(pickle_binary)
-    pickle_tar.close()
-    time = np.empty(len(weather), dtype='object')
-    thermometer = np.empty(len(weather), dtype='float')
-    for i, w in enumerate(weather):
-        time[i] = w.time
-        thermometer[i] = w.thermometer
-
+    if not os.path.isfile(f'{TORCH_FILENAME}.tar.xz'):
+        print('Run preprocessing script first')
+        exit()
+    '''
     t = np.arange(0, len(weather))
     linear_component = np.polyfit(t, thermometer, 1)[0]
     thermometer_without_linear = thermometer - linear_component * t
@@ -123,4 +69,43 @@ if __name__ == '__main__':
     plt.plot(t, restored)
     plt.plot(np.arange(0, len(thermometer)), thermometer)
     plt.show()
-    # print(len(time), time.shape, len(WeatherRow.__annotations__))
+    '''
+    torch_tar, torch_binary = read_from_tar(TORCH_FILENAME)
+    data = torch.load(torch_binary)
+    torch_tar.close()
+
+    # Needed to obtain reproducible results for debugging
+    np.random.seed(2)
+    torch.manual_seed(2)
+
+    WINDOW_SIZE = 15
+    time = data[-1000:,1]
+    thermometer = torch.from_numpy(data[-1000:,5]).float()
+    
+    thermometer_X = torch.empty((len(thermometer) - WINDOW_SIZE, WINDOW_SIZE))
+    thermometer_y = torch.empty((len(thermometer) - WINDOW_SIZE, 1))
+    for i in range(WINDOW_SIZE, len(thermometer)):
+        thermometer_X[i - WINDOW_SIZE] = thermometer[i-WINDOW_SIZE:i]
+        thermometer_y[i - WINDOW_SIZE] = thermometer[i]
+    thermometer_X = thermometer_X.reshape((thermometer_X.shape[0], thermometer_X.shape[1], 1))
+
+    model = WeatherLSTM(WINDOW_SIZE)
+    # model.double() # Cast floats to double
+
+    loss_func = nn.MSELoss(reduction='sum')
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.1)#torch.optim.LBFGS(model.parameters(), lr=0.7)
+    for t in range(10):
+        model.initialize()
+        def step_closure():
+            optimizer.zero_grad()
+            out = model(thermometer_X)
+            loss = loss_func(out, thermometer_y)
+            print(f'Iteration {t}, Loss: {loss.item()}')
+            loss.backward()
+            return loss
+        optimizer.step(step_closure)
+
+    with torch.no_grad():
+        plt.plot(time[-1000 + WINDOW_SIZE:], thermometer_y)
+        plt.plot(time[-1000 + WINDOW_SIZE:], model(thermometer_X))
+        plt.show()
