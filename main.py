@@ -57,7 +57,7 @@ if __name__ == '__main__':
     thermometer_y = torch.from_numpy(scalerY.fit_transform(thermometer_y))
     thermometer_X = thermometer_X.reshape((thermometer_X.shape[0], thermometer_X.shape[1], 1))
     
-    thermometer_X, thermometer_y = (thermometer_X.type(DTYPE).to(DEVICE), thermometer_y.type(DTYPE).to(DEVICE))
+    thermometer_X, thermometer_y = (thermometer_X.to(DEVICE).type(DTYPE), thermometer_y.to(DEVICE).type(DTYPE))
 
     model = WeatherLSTM()
 
@@ -75,6 +75,6 @@ if __name__ == '__main__':
         optimizer.step(step_closure)
 
     with torch.no_grad():
-        plt.plot(time[-SAMPLES + WINDOW_SIZE:], scalerY.inverse_transform(thermometer_y))
-        plt.plot(time[-SAMPLES + WINDOW_SIZE:], scalerY.inverse_transform(model(thermometer_X)))
+        plt.plot(time[-SAMPLES + WINDOW_SIZE:], scalerY.inverse_transform(thermometer_y.cpu()))
+        plt.plot(time[-SAMPLES + WINDOW_SIZE:], scalerY.inverse_transform(model(thermometer_X).cpu()))
         plt.show()
