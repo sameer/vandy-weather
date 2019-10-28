@@ -17,7 +17,7 @@ class WeatherLSTM(nn.Module):
         hidden_state / cell_state: (num_layers * num_directions, window_size, hidden_size)
         '''
         shape = (2 * self.bidirectional, WINDOW_SIZE, self.hidden_dim)
-        self.hidden = (torch.zeros(shape, dtype=DTYPE).to(DEVICE), torch.zeros(shape, dtype=DTYPE).to(DEVICE))
+        self.hidden = (torch.zeros(shape, dtype=DTYPE, device=DEVICE), torch.zeros(shape, dtype=DTYPE, device=DEVICE))
     
     def forward(self, inp):
         '''
