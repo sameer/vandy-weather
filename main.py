@@ -60,6 +60,7 @@ if __name__ == '__main__':
     thermometer_X, thermometer_y = (thermometer_X.to(DEVICE).type(DTYPE), thermometer_y.to(DEVICE).type(DTYPE))
 
     model = WeatherLSTM()
+    model.to(DEVICE)
 
     loss_func = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.005)#torch.optim.LBFGS(model.parameters(), lr=0.7)
