@@ -61,7 +61,6 @@ if __name__ == '__main__':
             torch.save(data, buffer)
             torch_tarinfo = tarfile.TarInfo(TORCH_FILENAME)
             torch_tarinfo.size = buffer.seek(0, io.SEEK_END)
-            print(buffer.tell())
             torch_tar.addfile(torch_tarinfo,
                               fileobj=io.BytesIO(buffer.getvalue()))
     print('Done!')
