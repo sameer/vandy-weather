@@ -65,9 +65,9 @@ if __name__ == '__main__':
     loss_func = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.005)#torch.optim.LBFGS(model.parameters(), lr=0.7)
     for t in range(10):
-        model.initialize()
         def step_closure():
             optimizer.zero_grad()
+            model.initialize()
             out = model(thermometer_X)
             loss = loss_func(out, thermometer_y)
             print(f'Iteration {t}, Loss: {loss.item()}')
