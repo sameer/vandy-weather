@@ -7,42 +7,8 @@ from torch import nn
 from sklearn import preprocessing
 
 from sanitize_data import read_from_tar, TORCH_FILENAME
-
-class WeatherLSTM(nn.Module):
-    def __init__(self, window_size: int, device, input_dim: int = 1, hidden_dim: int = 51, bidirectional: bool = False):
-        super().__init__()
-        self.window_size = window_size
-        self.device = device
-        self.input_dim = input_dim
-        self.hidden_dim = hidden_dim
-        self.bidirectional = int(bidirectional) + 1
-        self.lstm = nn.LSTM(1, hidden_dim, 2)
-        self.linear = nn.Linear(hidden_dim, 1)
-    
-    def initialize(self):
-        '''
-        hidden_state / cell_state: (num_layers * num_directions, window_size, hidden_size)
-        '''
-        shape = (2 * self.bidirectional, self.window_size, self.hidden_dim)
-        self.hidden = (torch.zeros(shape).to(self.device), torch.zeros(shape).to(self.device))
-    
-    def forward(self, inp):
-        '''
-        inp: (num_samples, window_size, num_features)
-        out: (num_samples, prediction (1), num_features)
-        '''
-        # outputs = []
-        # for sample in input.chunk(input.size(0), dim=0):
-        #     output, (self.hidden_state, self.cell_state) = self.lstm(sample, (self.hidden_state, self.cell_state))
-        #     output = self.linear(output)
-        #     outputs += [output]
-        # print(outputs[0].shape)
-        # outputs = torch.stack(outputs, 1).squeeze(2)
-        # print(outputs.shape)
-        out, self.hidden = self.lstm(inp, self.hidden)
-        
-        out = self.linear(out[:, -1, :])
-        return out
+from model import WeatherLSTM
+from config import WINDOW_SIZE, DEVICE, DTYPE
 
 
 if __name__ == '__main__':
@@ -75,14 +41,8 @@ if __name__ == '__main__':
     np.random.seed(2)
     torch.manual_seed(2)
 
-    if torch.cuda.is_available():
-        device = torch.device('cuda')
-    else:
-        device = torch.device('cpu')
-    dtype = torch.float
+    SAMPLES = 100
 
-    SAMPLES = 10000
-    WINDOW_SIZE = 15
     time = data[-SAMPLES:,1]
     thermometer = torch.from_numpy(data[-SAMPLES:,5]).float()
 
@@ -97,11 +57,9 @@ if __name__ == '__main__':
     thermometer_y = torch.from_numpy(scalerY.fit_transform(thermometer_y))
     thermometer_X = thermometer_X.reshape((thermometer_X.shape[0], thermometer_X.shape[1], 1))
     
-    thermometer_X, thermometer_y = (thermometer_X.float().to(device), thermometer_y.float().to(device))
+    thermometer_X, thermometer_y = (thermometer_X.type(DTYPE).to(DEVICE), thermometer_y.type(DTYPE).to(DEVICE))
 
-    model = WeatherLSTM(WINDOW_SIZE, device)
-    model.to(device)
-    # model.double() # Cast floats to double
+    model = WeatherLSTM()
 
     loss_func = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.005)#torch.optim.LBFGS(model.parameters(), lr=0.7)
