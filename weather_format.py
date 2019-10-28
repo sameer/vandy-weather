@@ -1,5 +1,5 @@
 from enum import Enum, auto
-from typing import NamedTuple, OrderedDict
+from typing import NamedTuple, Dict
 import datetime
 
 TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
@@ -65,7 +65,7 @@ class WeatherRow(NamedTuple):
     field_level_humidity: str
 
     @classmethod
-    def from_csv_dict(cls: 'WeatherRow', dct: OrderedDict[str, str]) -> dict:
+    def from_csv_dict(cls: 'WeatherRow', dct: Dict[str, str]) -> dict:
         """ Convert a weather dict read with DictReader to correct types as WeatherRow."""
         new_dict = {}
         for field, value in dct.items():
