@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
     time = data[:TRAIN_END,1]
     thermometer = WeatherDataset(torch.from_numpy(data[:TRAIN_END,5]).to(DEVICE, dtype=DTYPE))
-    loader = torch.utils.data.DataLoader(thermometer, batch_size=1000, shuffle=False)
+    loader = torch.utils.data.DataLoader(thermometer, batch_size=1000, shuffle=True)
     model = WeatherLSTM()
     model.to(DEVICE, dtype=DTYPE)
 
