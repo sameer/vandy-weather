@@ -4,13 +4,13 @@ from torch import nn
 from config import WINDOW_SIZE, DEVICE, DTYPE
 
 class WeatherLSTM(nn.Module):
-    def __init__(self, input_dim: int = 1, hidden_dim: int = 51, bidirectional: bool = False):
+    def __init__(self, input_dim: int = 1, hidden_dim: int = 51, output_dim: int = 1, bidirectional: bool = False):
         super().__init__()
         self.input_dim = input_dim
         self.hidden_dim = hidden_dim
         self.bidirectional = int(bidirectional) + 1
         self.lstm = nn.LSTM(1, hidden_dim, 2)
-        self.linear = nn.Linear(hidden_dim, 1)
+        self.linear = nn.Linear(hidden_dim, output_dim)
     
     def initialize(self):
         '''
