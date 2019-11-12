@@ -2,14 +2,13 @@ from enum import Enum, auto
 from typing import NamedTuple, Dict
 import datetime
 
-TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+import torch
+from torch.utils.data import Dataset
+from sklearn import preprocessing
 
-TRAIN_FIRST_POINT = (1, datetime.datetime.strptime('2017-05-15 13:28:39', TIME_FORMAT))
-TRAIN_LAST_POINT = (423601, 972785, datetime.datetime.strptime('2018-05-15 13:28:27', TIME_FORMAT))
-VALIDATE_FIRST_POINT = (423602, 972789, datetime.datetime.strptime('2018-05-15 13:29:27', TIME_FORMAT))
-VALIDATE_LAST_POINT = (922457, 2432708, datetime.datetime.strptime('2019-05-15 13:29:17', TIME_FORMAT))
-TEST_FIRST_POINT = (922458, 2432710, datetime.datetime.strptime('2019-05-15 13:30:17', TIME_FORMAT))
-TEST_LAST_POINT = (1085912, 2941841, datetime.datetime.strptime('2019-09-19 13:55:15', TIME_FORMAT))
+from config import WINDOW_SIZE, DEVICE, DTYPE
+
+TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 class BarometerTendency(Enum):
     NULL = auto()
@@ -90,3 +89,16 @@ class WeatherRow(NamedTuple):
                 )
                 return None
         return cls(**new_dict)
+
+
+class WeatherDataset(Dataset):
+    def __init__(self, data):
+        self.scaler = preprocessing.StandardScaler()
+        self.data = torch.from_numpy(self.scaler.fit_transform(data.reshape(-1, 1)).reshape(-1)).to(DEVICE, dtype=DTYPE)
+
+    def __getitem__(self, idx: int):
+        return self.data[idx:idx+WINDOW_SIZE]
+
+
+    def __len__(self):
+        return len(self.data) - WINDOW_SIZE

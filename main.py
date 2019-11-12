@@ -6,8 +6,9 @@ import torch
 from torch import nn
 
 from sanitize_data import read_from_tar, TORCH_FILENAME
-from model import WeatherLSTM, into_windows, Scaler
-from config import WINDOW_SIZE, DEVICE, DTYPE
+from weather_format import WeatherDataset
+from model import WeatherLSTM
+from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END
 
 
 if __name__ == '__main__':
@@ -37,34 +38,32 @@ if __name__ == '__main__':
     torch_tar.close()
 
     # Needed to obtain reproducible results for debugging
-    # np.random.seed(2)
-    # torch.manual_seed(2)
+    np.random.seed(2)
+    torch.manual_seed(2)
 
-    SAMPLES = 100
 
-    time = data[-SAMPLES:,1]
-    thermometer = torch.from_numpy(data[-SAMPLES:,5]).float()
-    thermometer_scaler = Scaler()
-    thermometer_X, thermometer_y = thermometer_scaler.fit(*into_windows(thermometer))
-    thermometer_X, thermometer_y = (thermometer_X.to(DEVICE).type(DTYPE), thermometer_y.to(DEVICE).type(DTYPE))
-
+    time = data[:TRAIN_END,1]
+    thermometer = WeatherDataset(torch.from_numpy(data[:TRAIN_END,5]).to(DEVICE, dtype=DTYPE))
+    loader = torch.utils.data.DataLoader(thermometer, batch_size=100, shuffle=False)
     model = WeatherLSTM()
-    model.to(DEVICE)
+    model.to(DEVICE, dtype=DTYPE)
 
     loss_func = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.005)#torch.optim.LBFGS(model.parameters(), lr=0.7)
-    for t in range(100):
-        def step_closure():
-            optimizer.zero_grad()
-            model.initialize()
-            out = model(thermometer_X)
-            loss = loss_func(out, thermometer_y)
-            print(f'Iteration {t}, Loss: {loss.item()}')
-            loss.backward()
-            return loss
-        optimizer.step(step_closure)
+    for epoch in range(100):
+        for step, batch in enumerate(loader):
+            batch = batch.reshape((batch.shape[0], batch.shape[1], 1))
+            def step_closure():
+                optimizer.zero_grad()
+                model.initialize()
+                out = model(batch[:,:-1])
+                loss = loss_func(out, batch[:,-1])
+                print(f'Epoch {epoch}, Step {step} Loss: {loss.item()}')
+                loss.backward()
+                return loss
+            optimizer.step(step_closure)
 
     with torch.no_grad():
-        plt.plot(time[-SAMPLES + WINDOW_SIZE:], thermometer_scaler.invert(thermometer_y.cpu()))
-        plt.plot(time[-SAMPLES + WINDOW_SIZE:], thermometer_scaler.invert(model(thermometer_X).cpu()))
+        plt.plot(time[TRAIN_END - WINDOW_SIZE:], thermometer_scaler.invert(thermometer_y.cpu()))
+        plt.plot(time[TRAIN_END - WINDOW_SIZE:], thermometer_scaler.invert(model(thermometer_X).cpu()))
         plt.show()
