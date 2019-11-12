@@ -37,8 +37,8 @@ if __name__ == '__main__':
     torch_tar.close()
 
     # Needed to obtain reproducible results for debugging
-    np.random.seed(2)
-    torch.manual_seed(2)
+    # np.random.seed(2)
+    # torch.manual_seed(2)
 
     SAMPLES = 100
 
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     model = WeatherLSTM()
     model.to(DEVICE)
 
-    loss_func = nn.SmoothL1Loss()
+    loss_func = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.005)#torch.optim.LBFGS(model.parameters(), lr=0.7)
     for t in range(100):
         def step_closure():
