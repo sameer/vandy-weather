@@ -28,7 +28,7 @@ if __name__ == '__main__':
         data_reader = csv.DictReader(data_str)
         print('Processing data')
         weather = [WeatherRow.from_csv_dict(dct) for dct in data_reader]
-        weather = list(filter(lambda w: w is not None, weather))
+        weather = list(sorted(filter(lambda w: w is not None, weather), key=lambda w: w.time))
         data_tar.close()
         print('Saving pickle (compressing)')
         with tarfile.open(f'{PICKLE_FILENAME}.tar.xz', 'w:xz') as pickle_tar:
