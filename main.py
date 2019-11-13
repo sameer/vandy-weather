@@ -11,7 +11,7 @@ from model import WeatherLSTM
 from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END
 
 
-if __name__ == '__main__':
+def train():
     if not os.path.isfile(f'{TORCH_FILENAME}.tar.xz'):
         print('Run preprocessing script first')
         exit()
@@ -64,6 +64,10 @@ if __name__ == '__main__':
             optimizer.step(step_closure)
 
     with torch.no_grad():
-        plt.plot(time[TRAIN_END - WINDOW_SIZE:], thermometer_scaler.invert(thermometer_y.cpu()))
-        plt.plot(time[TRAIN_END - WINDOW_SIZE:], thermometer_scaler.invert(model(thermometer_X).cpu()))
+        thermometer_validate = WeatherDataset(data[TRAIN_END:VALIDATE_END,5])
+        plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [thermometer_validate[idx][-1].cpu() for idx in range(len(thermometer_validate))])
+        plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [model(thermometer_validate[idx][:-1].reshape((1, -1, 1))).cpu() for idx in range(len(thermometer_validate))])
         plt.show()
+
+if __name__ == '__main__':
+    train()
