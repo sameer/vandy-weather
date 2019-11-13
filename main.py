@@ -55,7 +55,7 @@ if __name__ == '__main__':
             batch = batch.reshape((batch.shape[0], batch.shape[1], 1))
             def step_closure():
                 optimizer.zero_grad()
-                model.initialize()
+                # model.initialize()
                 out = model(batch[:,:-1])
                 loss = loss_func(out, batch[:,-1])
                 print(f'Epoch {epoch}, Step {step} Loss: {loss.item()}')
