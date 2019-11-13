@@ -8,7 +8,7 @@ from torch import nn
 from sanitize_data import read_from_tar, TORCH_FILENAME
 from weather_format import WeatherDataset
 from model import WeatherLSTM
-from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END
+from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END, CPU
 
 
 if __name__ == '__main__':
@@ -64,8 +64,9 @@ if __name__ == '__main__':
             optimizer.step(step_closure)
 
     with torch.no_grad():
-        thermometer_validate = WeatherDataset(torch.from_numpy(data[TRAIN_END:VALIDATE_END,5]).to(DEVICE, dtype=DTYPE)
-        plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [thermometer_validate[idx][-1].cpu() for idx in range(len(thermometer_validate))])
-        plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [model(thermometer_validate[idx][:-1].reshape((1, -1, 1))).cpu() for idx in range(len(thermometer_validate))])
+        model.to(CPU)
+        thermometer_validate = WeatherDataset(torch.from_numpy(data[TRAIN_END:VALIDATE_END,5]).to(CPU, dtype=DTYPE))
+        plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [thermometer_validate[idx][-1] for idx in range(len(thermometer_validate))])
+        plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [model(thermometer_validate[idx][:-1].reshape((1, -1, 1))) for idx in range(len(thermometer_validate))])
         plt.show()
 
