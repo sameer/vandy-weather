@@ -8,7 +8,7 @@ from torch import nn
 from sanitize_data import read_from_tar, TORCH_FILENAME
 from weather_format import WeatherDataset
 from model import WeatherLSTM
-from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END, CPU
+from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END
 
 
 if __name__ == '__main__':
