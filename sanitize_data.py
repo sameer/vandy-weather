@@ -20,7 +20,7 @@ def read_from_tar(filename: str) -> Tuple[tarfile.TarFile, BinaryIO]:
     return (tar, tar.extractfile(tar.getmember(filename)))
 
 
-def sanitize():
+if __name__ == '__main__':
     if not os.path.isfile(f'{PICKLE_FILENAME}.tar.xz'):
         print('Loading data')
         data_tar, data_binary = read_from_tar(CSV_FILENAME)
@@ -64,6 +64,3 @@ def sanitize():
             torch_tar.addfile(torch_tarinfo,
                               fileobj=io.BytesIO(buffer.getvalue()))
     print('Done!')
-
-if __name__ == '__main__':
-    sanitize()

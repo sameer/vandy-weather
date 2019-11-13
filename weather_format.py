@@ -94,7 +94,7 @@ class WeatherRow(NamedTuple):
 class WeatherDataset(Dataset):
     def __init__(self, data):
         self.scaler = preprocessing.StandardScaler()
-        self.data = torch.from_numpy(self.scaler.fit_transform(data.reshape(-1, 1).cpu()).reshape(-1)).to(DEVICE, dtype=DTYPE)
+        self.data = torch.from_numpy(self.scaler.fit_transform(data.cpu().numpy().reshape(-1, 1)).reshape(-1)).to(DEVICE, dtype=DTYPE)
 
     def __getitem__(self, idx: int):
         return self.data[idx:idx+WINDOW_SIZE]

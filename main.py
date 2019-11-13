@@ -11,7 +11,7 @@ from model import WeatherLSTM
 from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END
 
 
-def train():
+if __name__ == '__main__':
     if not os.path.isfile(f'{TORCH_FILENAME}.tar.xz'):
         print('Run preprocessing script first')
         exit()
@@ -69,5 +69,3 @@ def train():
         plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [model(thermometer_validate[idx][:-1].reshape((1, -1, 1))).cpu() for idx in range(len(thermometer_validate))])
         plt.show()
 
-if __name__ == '__main__':
-    train()
