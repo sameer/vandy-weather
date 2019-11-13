@@ -69,4 +69,4 @@ if __name__ == '__main__':
         plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [thermometer_validate[idx][-1] for idx in range(len(thermometer_validate))])
         plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [model(thermometer_validate[idx][:-1].reshape((1, -1, 1))) for idx in range(len(thermometer_validate))])
         plt.show()
-
+        plt.savefig('validate.png')
