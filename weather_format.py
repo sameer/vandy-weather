@@ -6,7 +6,7 @@ import torch
 from torch.utils.data import Dataset
 from sklearn import preprocessing
 
-from config import WINDOW_SIZE, DEVICE, DTYPE
+from config import WINDOW_SIZE
 
 TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
@@ -94,7 +94,7 @@ class WeatherRow(NamedTuple):
 class WeatherDataset(Dataset):
     def __init__(self, data):
         self.scaler = preprocessing.StandardScaler()
-        self.data = torch.from_numpy(self.scaler.fit_transform(data.cpu().numpy().reshape(-1, 1)).reshape(-1)).to(DEVICE, dtype=DTYPE)
+        self.data = torch.from_numpy(self.scaler.fit_transform(data.cpu().numpy().reshape(-1, 1)).reshape(-1)).to(data.device, dtype=data.dtype)
 
     def __getitem__(self, idx: int):
         return self.data[idx:idx+WINDOW_SIZE]
