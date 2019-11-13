@@ -65,7 +65,7 @@ if __name__ == '__main__':
 
     with torch.no_grad():
         model = model.cpu()
-        thermometer_validate = WeatherDataset(torch.from_numpy(data[TRAIN_END:VALIDATE_END,5]).to(device=torch.device('cpu'), dtype=DTYPE)
+        thermometer_validate = WeatherDataset(torch.from_numpy(data[TRAIN_END:VALIDATE_END,5]).to(device=torch.device('cpu'), dtype=DTYPE))
         plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [thermometer_validate[idx][-1] for idx in range(len(thermometer_validate))])
         plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [model(thermometer_validate[idx][:-1].reshape((1, -1, 1))) for idx in range(len(thermometer_validate))])
         plt.show()
