@@ -57,7 +57,7 @@ if __name__ == '__main__':
                 optimizer.zero_grad()
                 # model.initialize()
                 out = model(batch[:,:-1,:])
-                loss = loss_func(out, batch[:,-1,0:1])
+                loss = loss_func(out, batch[:,-1,1:2])
                 print(f'Epoch {epoch}, Step {step} Loss: {loss.item()}')
                 loss.backward()
                 return loss
