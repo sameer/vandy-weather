@@ -67,5 +67,5 @@ if __name__ == '__main__':
         model = model.cpu()
         thermometer_validate = WeatherDataset(torch.from_numpy(data[TRAIN_END:VALIDATE_END,TARGET_FEATURES]).to(device=torch.device('cpu'), dtype=DTYPE), thermometer.scaler)
         plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [thermometer_validate[idx][-1,1] for idx in range(len(thermometer_validate))])
-        plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [model(thermometer_validate[idx][:-1].reshape((1, WINDOW_SIZE, len(TARGET_FEATURES)))) for idx in range(len(thermometer_validate))])
+        plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [model(thermometer_validate[idx][:-1,:].reshape((1, WINDOW_SIZE-1, len(TARGET_FEATURES)))) for idx in range(len(thermometer_validate))])
         plt.savefig('validate.png')
