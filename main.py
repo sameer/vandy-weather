@@ -72,6 +72,8 @@ if __name__ == '__main__':
         validation_results = [model(validation_data[idx][:-1,:].reshape((1, WINDOW_SIZE-1, len(TARGET_FEATURES))))[0,:] for idx in range(len(validation_data))]
 
         for i, feature in enumerate(TARGET_FEATURES):
+            plt.title(feature_names[feature])
             plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [validation_data[idx][-1, i] for idx in range(len(validation_data))])
             plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [validation_results[idx][i] for idx in range(len(validation_data))])
             plt.savefig(f'validate-{feature_names[feature]}.png')
+            plt.clf()
