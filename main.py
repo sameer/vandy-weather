@@ -8,7 +8,7 @@ from torch import nn
 from sanitize_data import read_from_tar, TORCH_FILENAME
 from weather_format import WeatherDataset
 from model import WeatherLSTM
-from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END
+from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END, BATCH_SIZE
 
 
 if __name__ == '__main__':
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     time = data[:TRAIN_END,1]
     TARGET_FEATURES = [3] + list(range(5, 18))
     thermometer = WeatherDataset(torch.from_numpy(data[:TRAIN_END, TARGET_FEATURES]).to(DEVICE, dtype=DTYPE))
-    loader = torch.utils.data.DataLoader(thermometer, batch_size=1000, shuffle=True)
+    loader = torch.utils.data.DataLoader(thermometer, batch_size=BATCH_SIZE, shuffle=True)
     model = WeatherLSTM(input_dim=len(TARGET_FEATURES))
     model.to(DEVICE, dtype=DTYPE)
 
@@ -67,5 +67,5 @@ if __name__ == '__main__':
         model = model.cpu()
         thermometer_validate = WeatherDataset(torch.from_numpy(data[TRAIN_END:VALIDATE_END,TARGET_FEATURES]).to(device=torch.device('cpu'), dtype=DTYPE), thermometer.scaler)
         plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [thermometer_validate[idx][-1,1] for idx in range(len(thermometer_validate))])
-        plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [model(thermometer_validate[idx][:-1].reshape((1, -1, len(TARGET_FEATURES)))) for idx in range(len(thermometer_validate))])
+        plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [model(thermometer_validate[idx][:-1].reshape((1, WINDOW_SIZE, len(TARGET_FEATURES)))) for idx in range(len(thermometer_validate))])
         plt.savefig('validate.png')
