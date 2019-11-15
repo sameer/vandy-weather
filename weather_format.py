@@ -96,9 +96,9 @@ class WeatherDataset(Dataset):
         self.scaler = scaler
         if scaler is None:
             self.scaler = preprocessing.StandardScaler()
-            self.scaler.fit(data.cpu().numpy().reshape(-1, 1))
+            self.scaler.fit(data.cpu().numpy())
 
-        self.data = torch.from_numpy(self.scaler.transform(data.cpu().numpy().reshape(-1, 1)).reshape(-1)).to(data.device, dtype=data.dtype)
+        self.data = torch.from_numpy(self.scaler.transform(data.cpu().numpy())).to(data.device, dtype=data.dtype)
 
     def __getitem__(self, idx: int):
         return self.data[idx:idx+WINDOW_SIZE]

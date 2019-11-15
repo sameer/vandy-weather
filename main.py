@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
 
     time = data[:TRAIN_END,1]
-    thermometer = WeatherDataset(torch.from_numpy(data[:TRAIN_END,5]).to(DEVICE, dtype=DTYPE))
+    thermometer = WeatherDataset(torch.from_numpy(data[:TRAIN_END,5].reshape(-1, 1)).to(DEVICE, dtype=DTYPE))
     loader = torch.utils.data.DataLoader(thermometer, batch_size=1000, shuffle=True)
     model = WeatherLSTM()
     model.to(DEVICE, dtype=DTYPE)
@@ -52,7 +52,6 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(model.parameters(), lr=0.005)#torch.optim.LBFGS(model.parameters(), lr=0.7)
     for epoch in range(10):
         for step, batch in enumerate(loader):
-            batch = batch.reshape((batch.shape[0], batch.shape[1], 1))
             def step_closure():
                 optimizer.zero_grad()
                 # model.initialize()
