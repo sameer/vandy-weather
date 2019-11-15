@@ -6,7 +6,7 @@ import torch
 from torch import nn
 
 from sanitize_data import read_from_tar, TORCH_FILENAME
-from weather_format import WeatherDataset
+from weather_format import WeatherDataset, WeatherRow
 from model import WeatherLSTM
 from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END, BATCH_SIZE
 
@@ -44,13 +44,13 @@ if __name__ == '__main__':
 
     time = data[:TRAIN_END,1]
     TARGET_FEATURES = [3] + list(range(5, 18))
-    thermometer = WeatherDataset(torch.from_numpy(data[:TRAIN_END, TARGET_FEATURES]).to(DEVICE, dtype=DTYPE))
-    loader = torch.utils.data.DataLoader(thermometer, batch_size=BATCH_SIZE, shuffle=True)
+    training_data = WeatherDataset(torch.from_numpy(data[:TRAIN_END, TARGET_FEATURES]).to(DEVICE, dtype=DTYPE))
+    loader = torch.utils.data.DataLoader(training_data, batch_size=BATCH_SIZE, shuffle=True)
     model = WeatherLSTM(input_dim=len(TARGET_FEATURES), output_dim=len(TARGET_FEATURES))
     model.to(DEVICE, dtype=DTYPE)
 
     loss_func = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)#torch.optim.LBFGS(model.parameters(), lr=0.7)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)#torch.optim.LBFGS(model.parameters(), lr=0.7)
     for epoch in range(10):
         for step, batch in enumerate(loader):
             def step_closure():
@@ -58,7 +58,6 @@ if __name__ == '__main__':
                 # model.initialize()
                 out = model(batch[:,:-1,:])
                 loss = loss_func(out, batch[:,-1,:])
-                print(out.shape)
                 print(f'Epoch {epoch}, Step {step} Loss: {loss.item()}')
                 loss.backward()
                 return loss
@@ -66,7 +65,13 @@ if __name__ == '__main__':
 
     with torch.no_grad():
         model = model.cpu()
-        thermometer_validate = WeatherDataset(torch.from_numpy(data[TRAIN_END:VALIDATE_END,TARGET_FEATURES]).to(device=torch.device('cpu'), dtype=DTYPE), thermometer.scaler)
-        plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [thermometer_validate[idx][-1,1] for idx in range(len(thermometer_validate))])
-        plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [model(thermometer_validate[idx][:-1,:].reshape((1, WINDOW_SIZE-1, len(TARGET_FEATURES))))[0,1] for idx in range(len(thermometer_validate))])
-        plt.savefig('validate.png')
+
+        feature_names = list(WeatherRow.__annotations__.keys())
+        validation_data = WeatherDataset(torch.from_numpy(data[TRAIN_END:VALIDATE_END,TARGET_FEATURES]).to(device=torch.device('cpu'), dtype=DTYPE), training_data.scaler)
+
+        validation_results = [model(validation_data[idx][:-1,:].reshape((1, WINDOW_SIZE-1, len(TARGET_FEATURES))))[0,:] for idx in range(len(validation_data))]
+
+        for i, feature in enumerate(TARGET_FEATURES):
+            plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [validation_data[idx][-1, i] for idx in range(len(validation_data))])
+            plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [validation_results[idx][i] for idx in range(len(validation_data))])
+            plt.savefig(f'validate-{feature_names[feature]}.png')
