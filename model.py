@@ -10,7 +10,7 @@ class WeatherLSTM(nn.Module):
         self.input_dim = input_dim
         self.hidden_dim = hidden_dim
         self.bidirectional = int(bidirectional) + 1
-        self.lstm = nn.LSTM(1, hidden_dim, 2)
+        self.lstm = nn.LSTM(input_dim, hidden_dim, 2)
         self.linear = nn.Linear(hidden_dim, output_dim)
     
     # def initialize(self):

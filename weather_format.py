@@ -96,6 +96,7 @@ class WeatherDataset(Dataset):
         self.scaler = scaler
         if scaler is None:
             self.scaler = preprocessing.StandardScaler()
+            # "Centering and scaling happen independently on each feature"
             self.scaler.fit(data.cpu().numpy())
 
         self.data = torch.from_numpy(self.scaler.transform(data.cpu().numpy())).to(data.device, dtype=data.dtype)
