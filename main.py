@@ -50,7 +50,7 @@ if __name__ == '__main__':
     model.to(DEVICE, dtype=DTYPE)
 
     loss_func = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.005)#torch.optim.LBFGS(model.parameters(), lr=0.7)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)#torch.optim.LBFGS(model.parameters(), lr=0.7)
     for epoch in range(10):
         for step, batch in enumerate(loader):
             def step_closure():
