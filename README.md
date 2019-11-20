@@ -1,6 +1,6 @@
 # vandy-weather
 
-Predict weather at Vanderbilt using a neural network.
+Forecast weather at Vanderbilt using a neural network suited for time series prediction.
 
 ## Dataset
 
@@ -29,3 +29,12 @@ Try it out on [Google Colab](https://colab.research.google.com/github/sameer/van
 * config.py: various runtime configuration, like number of hidden units and whether to run on GPU or CPU
 * main.py: loads PyTorch format data, standardizes it, runs training, and outputs validation plots
 * vandy_weather.ipynb: runs sanitize_data.py and main.py, for use on Google Colab
+
+## Resources
+
+* PyTorch repo example: https://github.com/pytorch/examples/tree/master/time_sequence_prediction
+* Link to list of helpful links: https://www.reddit.com/r/pytorch/comments/7w01gd/pytorch_for_time_series_forecasting/
+* scikit-learn docs: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler
+* Insight on multivariate + multi timestep learning (not in PyTorch): https://machinelearningmastery.com/how-to-develop-lstm-models-for-time-series-forecasting/
+* colah's post on gaining LSTM intuition: https://colah.github.io/posts/2015-08-Understanding-LSTMs/
+
