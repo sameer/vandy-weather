@@ -9,7 +9,7 @@ graciously provided by Ed Mansouri, founder of WeatherSTEM,.
 ### Caveats
 
 * Includes observations from `2017-05-15 13:28:39` through `2019-09-19 13:55:15`
-* There are some large time gaps in sensor measurement: ~ 1 month or less
+* There are some large time gaps in sensor measurement: 1 month or less
 * Measurements do not always occur regularly :sometimes every 2min, sometimes every 1min
 * Last few sensor columns have many NULL values due to the recent addition of new sensors to the station for: `turf_temperature,club_level_temperature,club_level_humidity,field_level_temperature,field_level_humidity`
 * dataset is NOT sorted by the time column, since it was obtained from a SQL dump and converted using [mysqldump-to-csv](https://github.com/jamesmishra/mysqldump-to-csv)
