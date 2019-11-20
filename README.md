@@ -16,7 +16,7 @@ This is implemented with PyTorch for an LSTM and [scikit-learn for standardizati
 
 * Weather Vane is useless as a prediction input and as a prediction output. It appears to be effectively random when you only have observations from one station.
     * Same goes for anemometer, but interestingly 10-minute wind gust *IS* predictable!
-* UV radiation is just UV index. The prediction graph looks fine but it may be impossible to predict with small windows. There are cases where many timesteps have the same value and the next is suddenly different. The LSTM may conclude that predicting the same UV index is always best.
+* UV radiation is just [UV index](https://www.weather.gov/ilx/uv-index). The prediction graph looks fine but it may be impossible to predict with small windows. There are cases where many timesteps have the same value and the next is suddenly different. The LSTM may conclude that predicting the same UV index is always best.
 
 ## Demo
 
