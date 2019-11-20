@@ -21,6 +21,11 @@ An LSTM RNN (long short-term memory recurrent neural network) is used for multiv
 
 This is implemented with PyTorch for an LSTM and [scikit-learn for standardization](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler).
 
+### Layers
+
+* 2-layer LSTM with 51 hidden units
+* Linear layer to convert from hidden dimension to output dimension
+
 ## Observations
 
 * Weather Vane is useless as a prediction input and as a prediction output. It appears to be effectively random when you only have observations from one station.
