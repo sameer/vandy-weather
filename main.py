@@ -56,7 +56,7 @@ if __name__ == '__main__':
     loss_func = nn.MSELoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)#torch.optim.LBFGS(model.parameters(), lr=0.7)
     previous_validation_loss = float('inf')
-    for epoch in range(1):
+    for epoch in range(20):
         for step, batch in enumerate(train_loader):
             def step_closure():
                 optimizer.zero_grad()
@@ -98,9 +98,9 @@ if __name__ == '__main__':
         print('Running model on test dataset')
         test_loader = torch.utils.data.DataLoader(test_data, batch_size=(TOTAL_POINTS-VALIDATE_END) // 8, shuffle=False)
         for step, batch in enumerate(test_loader):
-            test_batch_results = model(batch[:,:-1,:]).cpu().numpy()
+            test_batch_results = test_data.inverse_transform(model(batch[:,:-1,:]).cpu().numpy())
             for i in range(len(test_batch_results)):
-                test_results.append(test_data.scaler.inverse_transform(test_batch_results[i]))
+                test_results.append(test_batch_results[i])
             print(f'{step*test_loader.batch_size * 100.0 / len(test_data)}% done')
 
         print('Plotting test actual and predicted')
