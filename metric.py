@@ -8,10 +8,7 @@ from torch import nn
 from sanitize_data import read_from_tar, TORCH_FILENAME
 from weather_format import WeatherDataset, WeatherRow
 from model import WeatherLSTM
-from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_START, TRAIN_END, TEST_END, VALIDATE_END, BATCH_SIZE
-
-# The purpose of this class is to iteratively run a hundred test cycles
-# Check the errors
+from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END, BATCH_SIZE, HIDDEN_DIM
 
 
 if __name__ == '__main__':
@@ -45,11 +42,11 @@ if __name__ == '__main__':
     torch.manual_seed(2)
 
 
-    time = data[TRAIN_START:TRAIN_END,1]
-    TARGET_FEATURES = [3] + list(range(5, 10)) + list(range(11, 13)) + list(range(14,18))
-    training_data = WeatherDataset(torch.from_numpy(data[TRAIN_START:TRAIN_END, TARGET_FEATURES]).to(DEVICE, dtype=DTYPE))
+    time = data[:TRAIN_END,1]
+    TARGET_FEATURES = [3] + list(range(5, 10)) + list(range(11, 13)) + + list(range(14, 15)) + list(range(16,18))
+    training_data = WeatherDataset(torch.from_numpy(data[:TRAIN_END, TARGET_FEATURES]).to(DEVICE, dtype=DTYPE))
     loader = torch.utils.data.DataLoader(training_data, batch_size=BATCH_SIZE, shuffle=True)
-    model = WeatherLSTM(input_dim=len(TARGET_FEATURES), output_dim=len(TARGET_FEATURES))
+    model = WeatherLSTM(input_dim=len(TARGET_FEATURES), hidden_dim=HIDDEN_DIM, output_dim=len(TARGET_FEATURES))
     model.to(DEVICE, dtype=DTYPE)
 
     loss_func = nn.MSELoss()
@@ -71,41 +68,16 @@ if __name__ == '__main__':
 
         feature_names = list(WeatherRow.__annotations__.keys())
         validation_data = WeatherDataset(torch.from_numpy(data[TRAIN_END:VALIDATE_END,TARGET_FEATURES]).to(device=torch.device('cpu'), dtype=DTYPE), training_data.scaler)
+
         validation_results = [model(validation_data[idx][:-1,:].reshape((1, WINDOW_SIZE-1, len(TARGET_FEATURES))))[0,:] for idx in range(len(validation_data))]
 
-
-        test_data = WeatherDataset(torch.from_numpy(data[VALIDATE_END:TRAIN_END,TARGET_FEATURES]).to(device=torch.device('cpu'), dtype=DTYPE), training_data.scaler)
-        test_results = [model(train_data[idx][:-1,:].reshape((1, WINDOW_SIZE-1, len(TARGET_FEATURES))))[0,:] for idx in range(len(test_data))]
-
-        samples = []
-        colors = []
-        feature = 2;
-        thresh = 0.5;
-
-        samples.append(data[i:i+15,feature] for i in range(len(test_data) - WINDOW_SIZE));
-        colors.append('b' if abs(test_data[idx][-1, feature] - test_results[idx][feature]) < thresh else 'r' for idx in range(WINDOW_SIZE-1, len(test_data)));
-
-        df = pd.DataFrame( samples );
-        iso = manifold.Isomap(n_neighbors=6, n_components=3);
-        iso.fit(df);
-
-        my_isomap = iso.transform(df);
-
-        fig = plt.figure();
-        ax = fig.add_subplot(111, projection='3d');
-        ax.set_title("ISO transformation 3D");
-
-        ax.scatter(my_isomap[:,0], my_isomap[:,1], my_isomap[:,2], marker='.', c=colours)
-        plt.show()
-
-
-
-'''
         for i, feature in enumerate(TARGET_FEATURES):
             plt.title(feature_names[feature])
-            plt.plot(data[VALIDATE_END: TEST_END - WINDOW_SIZE, 1], [test_data[idx][-1, i] for idx in range(len(test_data))])
-            plt.plot(data[VALIDATE_END: TEST_END - WINDOW_SIZE, 1], [test_results[idx][i] for idx in range(len(test_data))])
+            plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [validation_data[idx][-1, i] for idx in range(len(validation_data))])
+            plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [validation_results[idx][i] for idx in range(len(validation_data))])
             plt.savefig(f'validate-{feature_names[feature]}.png')
-            plt.clf()
 
-'''
+            error = sum([abs(validation_data[idx][-1, i] - validation_results[idx][i]) for idx in range(len(validation_data))])
+
+            print();
+            plt.clf()
