@@ -131,6 +131,8 @@ if __name__ == '__main__':
             avg_errors.append(avg_error)
 
         y_pos = np.arange(len(feature_names));
+        fig, ax = plt.subplots()
+
         plt.bar(y_pos, model_errors, 0.25, alpha=0.8, color='b');
         plt.bar(y_pos, avg_errors, 0.25, alpha=0.8, color='g');
         plt.bar(y_pos, last_errors, 0.25, alpha=0.8, color='r');
