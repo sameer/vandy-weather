@@ -52,7 +52,7 @@ if __name__ == '__main__':
     loss_func = nn.MSELoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)#torch.optim.LBFGS(model.parameters(), lr=0.7)
     previous_error = float('inf')
-    for epoch in range(10):
+    for epoch in range(0):
         for step, batch in enumerate(loader):
             def step_closure():
                 optimizer.zero_grad()
@@ -80,7 +80,7 @@ if __name__ == '__main__':
         print('Running model on test dataset')
         test_loader = torch.utils.data.DataLoader(test_data, batch_size=BATCH_SIZE, shuffle=False)
         for step, batch in enumerate(test_loader):
-            test_batch_results = model(batch[:,:-1,:]).to(device=torch.device('cpu'), dtype=DTYPE)
+            test_batch_results = test_data.scaler.inverse_transform(model(batch[:,:-1,:]).cpu().numpy())
             for i in range(len(test_batch_results)):
                 test_results.append(test_batch_results[i])
             print(f'{step*BATCH_SIZE * 100.0 / len(test_data)}% done')
