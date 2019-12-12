@@ -107,6 +107,6 @@ if __name__ == '__main__':
         for i, feature in enumerate(TARGET_FEATURES):
             plt.title(feature_names[feature])
             plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], data[VALIDATE_END+WINDOW_SIZE: TOTAL_POINTS, TARGET_FEATURES[i]])
-            plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], [test_results[idx][i] for idx in range(len(test_data))])
+            # plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], [test_results[idx][i] for idx in range(len(test_data))])
             plt.savefig(f'validate-{feature_names[feature]}.png')
             plt.clf()
