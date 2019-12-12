@@ -1,6 +1,4 @@
 .vscode
 .venv
-*.pickle.tar.xz
-*.pt.tar.xz
 *.csv
 __pycache__/
