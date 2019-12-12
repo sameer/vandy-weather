@@ -7,6 +7,7 @@ TOTAL_POINTS = 1085913
 TRAIN_END = math.floor(TOTAL_POINTS * 0.6)
 VALIDATE_END = math.floor(TOTAL_POINTS * 0.8)
 BATCH_SIZE = 1000
+HIDDEN_DIM = 256
 
 if torch.cuda.is_available():
     DEVICE = torch.device('cuda')

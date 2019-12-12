@@ -8,7 +8,7 @@ from torch import nn
 from sanitize_data import read_from_tar, TORCH_FILENAME
 from weather_format import WeatherDataset, WeatherRow
 from model import WeatherLSTM
-from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END, BATCH_SIZE
+from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END, BATCH_SIZE, HIDDEN_DIM
 
 
 if __name__ == '__main__':
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     TARGET_FEATURES = [3] + list(range(5, 10)) + list(range(11, 13)) + list(range(14,18))
     training_data = WeatherDataset(torch.from_numpy(data[:TRAIN_END, TARGET_FEATURES]).to(DEVICE, dtype=DTYPE))
     loader = torch.utils.data.DataLoader(training_data, batch_size=BATCH_SIZE, shuffle=True)
-    model = WeatherLSTM(input_dim=len(TARGET_FEATURES), output_dim=len(TARGET_FEATURES))
+    model = WeatherLSTM(input_dim=len(TARGET_FEATURES), hidden_dim=HIDDEN_DIM, output_dim=len(TARGET_FEATURES))
     model.to(DEVICE, dtype=DTYPE)
 
     loss_func = nn.MSELoss()

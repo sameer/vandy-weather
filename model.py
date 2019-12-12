@@ -5,12 +5,12 @@ from config import WINDOW_SIZE, DEVICE, DTYPE
 
 
 class WeatherLSTM(nn.Module):
-    def __init__(self, input_dim: int = 1, hidden_dim: int = 256, output_dim: int = 1, bidirectional: bool = False):
+    def __init__(self, input_dim: int, hidden_dim: int, output_dim: int, bidirectional: bool = False, num_layers: int = 2):
         super().__init__()
         self.input_dim = input_dim
         self.hidden_dim = hidden_dim
         self.bidirectional = int(bidirectional) + 1
-        self.lstm = nn.LSTM(input_dim, hidden_dim, 2, batch_first=True)
+        self.lstm = nn.LSTM(input_dim, hidden_dim, num_layers)
         self.linear = nn.Linear(hidden_dim, output_dim)
     
     # def initialize(self):
