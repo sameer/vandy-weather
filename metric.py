@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
         for i, feature in enumerate(TARGET_FEATURES):
             error = sum([abs(validation_data[idx][-1, i] - validation_results[idx][i]) for idx in range(len(validation_data))])
-            avg_error = sum([abs(validation_data[idx][-1, i] - np.average(validation_data[idx][:-1, i], axis=0)) for idx in range(len(validation_data))]));
+            avg_error = sum([abs(validation_data[idx][-1, i] - np.average(validation_data[idx][:-1, i], axis=0)) for idx in range(len(validation_data))]);
 
             print("The error for {} was {}".format(feature_names[feature], error/len(validation_data)));
             print("Average error: {}. This is {}% better than the average metric".format(avg_error/len(validation_data), avg_error/error*100));
