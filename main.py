@@ -135,13 +135,20 @@ if __name__ == '__main__':
         y_pos = np.arange(len(usable_features));
         fig, ax = plt.subplots()
 
+        for i in range(len(model_errors)):
+            max_val = max(model_errors[i], last_errors[i], avg_errors[i]);
+            model_errors[i] = model_errors[i] / max_val;
+            avg_errors[i] = avg_errors[i] / max_val;
+            last_errors[i] = last_errors[i] / max_val;
+
         plt.bar(y_pos, model_errors, 0.25, alpha=0.8, color='b', label='LSTM Model');
         plt.bar(y_pos, avg_errors, 0.25, alpha=0.8, color='g', label='Average Model');
         plt.bar(y_pos, last_errors, 0.25, alpha=0.8, color='r', label='Error Model');
 
+        usable_features = [word[0]+word[-1] for i, word in usable_features]
         plt.xticks(y_pos+0.25, usable_features)
         plt.xlabel('Feature')
-        plt.ylabel('Average L1 Error')
+        plt.ylabel('Relative L1 Error')
         plt.title('Prediction Method Errors')
         plt.legend()
         plt.tight_layout()
