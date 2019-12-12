@@ -135,9 +135,9 @@ if __name__ == '__main__':
         y_pos = np.arange(len(usable_features));
         fig, ax = plt.subplots()
 
-        plt.bar(y_pos, model_errors, 0.25, alpha=0.8, color='b');
-        plt.bar(y_pos, avg_errors, 0.25, alpha=0.8, color='g');
-        plt.bar(y_pos, last_errors, 0.25, alpha=0.8, color='r');
+        plt.bar(y_pos, model_errors, 0.25, alpha=0.8, color='b', label='LSTM Model');
+        plt.bar(y_pos, avg_errors, 0.25, alpha=0.8, color='g', label='Average Model');
+        plt.bar(y_pos, last_errors, 0.25, alpha=0.8, color='r', label='Error Model');
 
         plt.xticks(y_pos+0.25, usable_features)
         plt.xlabel('Feature')
