@@ -9,7 +9,7 @@ TRAIN_END = math.floor(TOTAL_POINTS * 0.6)
 TEST_END = TOTAL_POINTS
 VALIDATE_END = math.floor(TOTAL_POINTS * 0.8)
 BATCH_SIZE = TOTAL_POINTS // 100 # 100 steps per epoch
-HIDDEN_DIM = 51
+HIDDEN_DIM = 256
 REPRODUCIBLE = False
 
 if torch.cuda.is_available():
