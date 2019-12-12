@@ -8,7 +8,7 @@ from torch import nn
 from sanitize_data import read_from_tar, TORCH_FILENAME
 from weather_format import WeatherDataset, WeatherRow
 from model import WeatherLSTM
-from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END, BATCH_SIZE, HIDDEN_DIM
+from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END, BATCH_SIZE, HIDDEN_DIM, TOTAL_POINTS
 
 
 if __name__ == '__main__':
@@ -51,6 +51,7 @@ if __name__ == '__main__':
 
     loss_func = nn.MSELoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)#torch.optim.LBFGS(model.parameters(), lr=0.7)
+    previous_error = float('inf')
     for epoch in range(10):
         for step, batch in enumerate(loader):
             def step_closure():
@@ -67,13 +68,13 @@ if __name__ == '__main__':
         model = model.cpu()
 
         feature_names = list(WeatherRow.__annotations__.keys())
-        validation_data = WeatherDataset(torch.from_numpy(data[TRAIN_END:VALIDATE_END,TARGET_FEATURES]).to(device=torch.device('cpu'), dtype=DTYPE), training_data.scaler)
 
-        validation_results = [model(validation_data[idx][:-1,:].reshape((1, WINDOW_SIZE-1, len(TARGET_FEATURES))))[0,:] for idx in range(len(validation_data))]
+        test_data = WeatherDataset(torch.from_numpy(data[VALIDATE_END:TOTAL_POINTS,TARGET_FEATURES]).to(device=torch.device('cpu'), dtype=DTYPE), training_data.scaler)
+        validation_results = [model(test_data[idx][:-1,:].reshape((1, WINDOW_SIZE-1, len(TARGET_FEATURES))))[0,:] for idx in range(len(test_data))]
 
         for i, feature in enumerate(TARGET_FEATURES):
             plt.title(feature_names[feature])
-            plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [validation_data[idx][-1, i] for idx in range(len(validation_data))])
-            plt.plot(data[TRAIN_END: VALIDATE_END - WINDOW_SIZE, 1], [validation_results[idx][i] for idx in range(len(validation_data))])
+            plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], data[(VALIDATE_END+WINDOW_SIZE - 1): TOTAL_POINTS, i])
+            plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], [validation_results[idx][i] for idx in range(len(test_data))])
             plt.savefig(f'validate-{feature_names[feature]}.png')
             plt.clf()
