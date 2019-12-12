@@ -133,6 +133,7 @@ if __name__ == '__main__':
 
         usable_features = [feature_names[feature] for i,feature in enumerate(TARGET_FEATURES)];
         y_pos = np.arange(len(usable_features));
+
         fig, ax = plt.subplots()
 
         for i in range(len(model_errors)):
@@ -141,9 +142,9 @@ if __name__ == '__main__':
             avg_errors[i] = avg_errors[i] / max_val;
             last_errors[i] = last_errors[i] / max_val;
 
-        plt.bar(y_pos, model_errors, 0.25, alpha=0.8, color='b', label='LSTM Model');
-        plt.bar(y_pos, avg_errors, 0.25, alpha=0.8, color='g', label='Average Model');
-        plt.bar(y_pos, last_errors, 0.25, alpha=0.8, color='r', label='Error Model');
+        plt.bar(y_pos+0.25, model_errors, width=0.25, alpha=0.8, color='b', label='LSTM Model');
+        plt.bar(y_pos, avg_errors, width=0.25, alpha=0.8, color='g', label='Average Model');
+        plt.bar(y_pos-0.25, last_errors, width=0.25, alpha=0.8, color='r', label='Error Model');
 
         usable_features = [word[0]+word[-1] for i, word in usable_features]
         plt.xticks(y_pos+0.25, usable_features)
