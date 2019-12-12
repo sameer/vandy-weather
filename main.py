@@ -8,7 +8,7 @@ from torch import nn
 from sanitize_data import read_from_tar, TORCH_FILENAME
 from weather_format import WeatherDataset, WeatherRow
 from model import WeatherLSTM
-from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END, BATCH_SIZE, HIDDEN_DIM, TOTAL_POINTS
+from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END, BATCH_SIZE, HIDDEN_DIM, TOTAL_POINTS, REPRODUCIBLE
 
 
 if __name__ == '__main__':
@@ -38,8 +38,9 @@ if __name__ == '__main__':
     torch_tar.close()
 
     # Needed to obtain reproducible results for debugging
-    np.random.seed(2)
-    torch.manual_seed(2)
+    if REPRODUCIBLE:
+        np.random.seed(2)
+        torch.manual_seed(2)
 
 
     time = data[:TRAIN_END,1]
