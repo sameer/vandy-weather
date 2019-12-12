@@ -104,7 +104,7 @@ if __name__ == '__main__':
                 test_results.append(test_batch_results[i])
             print(f'{step*test_loader.batch_size * 100.0 / len(test_data)}% done')
 
-'''
+        '''
         print('Plotting test actual and predicted')
         for i, feature in enumerate(TARGET_FEATURES):
             plt.title(feature_names[feature])
@@ -112,12 +112,13 @@ if __name__ == '__main__':
             plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], [test_results[idx][i] for idx in range(len(test_data))])
             # plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], [np.average(data[idx+VALIDATE_END:idx+VALIDATE_END+WINDOW_SIZE-1, feature], axis=0) for idx in range(len(test_results))])
             plt.savefig(f'test-{feature_names[feature]}.png')
-            plt.clf() '''
-
+            plt.clf()
+        '''
 
         model_errors = []
         last_errors = []
         avg_errors = []
+
         for i, feature in enumerate(TARGET_FEATURES):
             error = sum([abs(data[idx+VALIDATE_END+WINDOW_SIZE-1, feature] - test_results[idx][i]) for idx in range(len(test_results))])
             avg_error = sum([abs(data[idx+VALIDATE_END+WINDOW_SIZE-1, feature] - np.average(data[idx+VALIDATE_END:idx+VALIDATE_END+WINDOW_SIZE-1, feature], axis=0)) for idx in range(len(test_results))]);
