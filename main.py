@@ -70,11 +70,11 @@ if __name__ == '__main__':
         feature_names = list(WeatherRow.__annotations__.keys())
 
         test_data = WeatherDataset(torch.from_numpy(data[VALIDATE_END:TOTAL_POINTS,TARGET_FEATURES]).to(device=torch.device('cpu'), dtype=DTYPE), training_data.scaler)
-        validation_results = [model(test_data[idx][:-1,:].reshape((1, WINDOW_SIZE-1, len(TARGET_FEATURES))))[0,:] for idx in range(len(test_data))]
+        test_results = [model(test_data[idx][:-1,:].reshape((1, WINDOW_SIZE-1, len(TARGET_FEATURES))))[0,:] for idx in range(len(test_data))]
 
         for i, feature in enumerate(TARGET_FEATURES):
             plt.title(feature_names[feature])
             plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], data[(VALIDATE_END+WINDOW_SIZE - 1): TOTAL_POINTS, i])
-            plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], [validation_results[idx][i] for idx in range(len(test_data))])
+            plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], [test_results[idx][i] for idx in range(len(test_data))])
             plt.savefig(f'validate-{feature_names[feature]}.png')
             plt.clf()
