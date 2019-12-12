@@ -78,7 +78,7 @@ if __name__ == '__main__':
         test_results = [] #[model(test_data[idx][:-1,:].reshape((1, WINDOW_SIZE-1, len(TARGET_FEATURES))))[0,:] for idx in range(len(test_data))]
 
         print('Running model on test dataset')
-        test_loader = torch.utils.data.DataLoader(test_data, batch_size=BATCH_SIZE, shuffle=False)
+        test_loader = torch.utils.data.DataLoader(test_data, batch_size=(TOTAL_POINTS-VALIDATE_END) // 8, shuffle=False)
         for step, batch in enumerate(test_loader):
             test_batch_results = test_data.scaler.inverse_transform(model(batch[:,:-1,:]).cpu().numpy())
             for i in range(len(test_batch_results)):
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         print('Plotting test actual and predicted')
         for i, feature in enumerate(TARGET_FEATURES):
             plt.title(feature_names[feature])
-            plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], data[(VALIDATE_END+WINDOW_SIZE - 1): TOTAL_POINTS, i])
+            plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], data[VALIDATE_END+WINDOW_SIZE: TOTAL_POINTS, i])
             plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], [test_results[idx][i] for idx in range(len(test_data))])
             plt.savefig(f'validate-{feature_names[feature]}.png')
             plt.clf()
