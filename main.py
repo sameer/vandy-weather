@@ -52,7 +52,7 @@ if __name__ == '__main__':
     loss_func = nn.MSELoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)#torch.optim.LBFGS(model.parameters(), lr=0.7)
     previous_error = float('inf')
-    for epoch in range(0):
+    for epoch in range(5):
         for step, batch in enumerate(loader):
             def step_closure():
                 optimizer.zero_grad()
@@ -64,7 +64,7 @@ if __name__ == '__main__':
                 return loss
             optimizer.step(step_closure)
         with torch.no_grad():
-            validation_data = WeatherDataset(torch.from_numpy(data[TRAIN_END:VALIDATE_END,TARGET_FEATURES]).to(device=DEVICE, dtype=DTYPE), training_data.scaler)
+            # validation_data = WeatherDataset(torch.from_numpy(data[TRAIN_END:VALIDATE_END,TARGET_FEATURES]).to(device=DEVICE, dtype=DTYPE), training_data.scaler)
             # validation
 
     print('Done training, now validating.')
@@ -83,7 +83,7 @@ if __name__ == '__main__':
             test_batch_results = test_data.scaler.inverse_transform(model(batch[:,:-1,:]).cpu().numpy())
             for i in range(len(test_batch_results)):
                 test_results.append(test_batch_results[i])
-            print(f'{step*BATCH_SIZE * 100.0 / len(test_data)}% done')
+            print(f'{step*test_loader.batch_size * 100.0 / len(test_data)}% done')
 
         print('Plotting test actual and predicted')
         for i, feature in enumerate(TARGET_FEATURES):
