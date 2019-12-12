@@ -117,5 +117,5 @@ if __name__ == '__main__':
              avg_error = sum([abs(data[idx, TARGET_FEATURES[i]] - np.average(data[idx-WINDOW_SIZE+1:idx, TARGET_FEATURES[i]], axis=0)) for idx in range(VALIDATE_END+WINDOW_SIZE-1, TOTAL_POINTS)]);
 
              print("The error for {} was {}".format(feature_names[feature], error/len(test_data)));
-             print("Average error: {}. This is {}% better than the average metric".format(avg_error/len(test_data), avg_error/error*100));
+             print("Average error: {}. This is {}% better than the average metric".format(avg_error/len(test_data), avg_error/error*100-100));
 
