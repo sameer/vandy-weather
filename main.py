@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
 
     time = data[:TRAIN_END,1]
-    TARGET_FEATURES = [3] + list(range(5, 10)) + list(range(11, 13)) + list(range(14,18))
+    TARGET_FEATURES = [3] + list(range(5, 10)) + list(range(11, 13)) + + list(range(14, 15)) + list(range(16,18))
     training_data = WeatherDataset(torch.from_numpy(data[:TRAIN_END, TARGET_FEATURES]).to(DEVICE, dtype=DTYPE))
     loader = torch.utils.data.DataLoader(training_data, batch_size=BATCH_SIZE, shuffle=True)
     model = WeatherLSTM(input_dim=len(TARGET_FEATURES), hidden_dim=HIDDEN_DIM, output_dim=len(TARGET_FEATURES))
