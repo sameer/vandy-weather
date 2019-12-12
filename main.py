@@ -68,6 +68,7 @@ if __name__ == '__main__':
                 return loss
             optimizer.step(step_closure)
         with torch.no_grad():
+            print('Evaluating model against validation set')
             model.eval()
             current_validation_loss = 0.0
             for batch in validation_loader:
@@ -78,11 +79,13 @@ if __name__ == '__main__':
             should_stop_early = current_validation_loss > previous_validation_loss
             if should_stop_early:
                 print(f'Stopping early, current validation loss {current_validation_loss} has increased from previous validation loss {previous_validation_loss}')
+            else:
+                print(f'Current validation loss is {current_validation_loss}, down from previous {previous_validation_loss}')
             previous_validation_loss = current_validation_loss
             if should_stop_early:
                 break
 
-    print('Done training, now validating.')
+    print('Done training, now testing')
     with torch.no_grad():
         model.eval()
 
