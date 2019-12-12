@@ -113,8 +113,8 @@ if __name__ == '__main__':
             plt.clf()
 
         for i, feature in enumerate(TARGET_FEATURES):
-             error = sum([abs(test_data[idx][i] - test_results[idx][i]) for idx in range(len(test_data))])
-             avg_error = sum([abs(data[idx][i] - np.average(data[idx-WINDOW_SIZE+1:idx, i], axis=0)) for idx in range(VALIDATE_END+WINDOW_SIZE-1, TOTAL_POINTS)]);
+             error = sum([abs(data[idx+VALIDATE_END, TARGET_FEATURES[i]] - test_results[idx][i]) for idx in range(len(test_data))])
+             avg_error = sum([abs(data[idx, TARGET_FEATURES[i]] - np.average(data[idx-WINDOW_SIZE+1:idx, TARGET_FEATURES[i]], axis=0)) for idx in range(VALIDATE_END+WINDOW_SIZE-1, TOTAL_POINTS)]);
 
              print("The error for {} was {}".format(feature_names[feature], error/len(test_data)));
              print("Average error: {}. This is {}% better than the average metric".format(avg_error/len(test_data), avg_error/error*100));
