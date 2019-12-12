@@ -146,4 +146,5 @@ if __name__ == '__main__':
         plt.legend()
         plt.tight_layout()
 
-        plt.show()
+        plt.savefig('errors.png');
+        plt.clf()
