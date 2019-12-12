@@ -1,5 +1,5 @@
 import os
-import time
+import time as rtime
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     loss_func = nn.MSELoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)#torch.optim.LBFGS(model.parameters(), lr=0.7)
 
-    start_time = time.time();
+    start_time = rtime.time();
     for epoch in range(10):
         for step, batch in enumerate(loader):
             def step_closure():
@@ -66,7 +66,7 @@ if __name__ == '__main__':
                 return loss
             optimizer.step(step_closure)
 
-    print("--- {} seconds ---".format(time.time() - start_time))
+    print("--- {} seconds ---".format(rtime.time() - start_time))
     with torch.no_grad():
         model = model.cpu()
 
