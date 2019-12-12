@@ -64,14 +64,23 @@ if __name__ == '__main__':
                 return loss
             optimizer.step(step_closure)
 
+    print('Done training, now validating.')
     with torch.no_grad():
-        model = model.cpu()
-
         feature_names = list(WeatherRow.__annotations__.keys())
 
-        test_data = WeatherDataset(torch.from_numpy(data[VALIDATE_END:TOTAL_POINTS,TARGET_FEATURES]).to(device=torch.device('cpu'), dtype=DTYPE), training_data.scaler)
-        test_results = [model(test_data[idx][:-1,:].reshape((1, WINDOW_SIZE-1, len(TARGET_FEATURES))))[0,:] for idx in range(len(test_data))]
+        test_data = WeatherDataset(torch.from_numpy(data[VALIDATE_END:TOTAL_POINTS,TARGET_FEATURES]).to(device=DEVICE, dtype=DTYPE), training_data.scaler)
 
+        test_results = [] #[model(test_data[idx][:-1,:].reshape((1, WINDOW_SIZE-1, len(TARGET_FEATURES))))[0,:] for idx in range(len(test_data))]
+
+        print('Running model on test dataset')
+        test_loader = torch.utils.data.DataLoader(test_data, batch_size=BATCH_SIZE, shuffle=False)
+        for step, batch in enumerate(test_loader):
+            test_batch_results = model(batch[:,:-1,:]).to(device=torch.device('cpu'), dtype=DTYPE)
+            for i in range(len(test_batch_results)):
+                test_results.append(test_batch_results[i])
+            print(f'{step*BATCH_SIZE * 100.0 / len(test_data)}% done')
+
+        print('Plotting test actual and predicted')
         for i, feature in enumerate(TARGET_FEATURES):
             plt.title(feature_names[feature])
             plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], data[(VALIDATE_END+WINDOW_SIZE - 1): TOTAL_POINTS, i])
