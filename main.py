@@ -131,6 +131,8 @@ if __name__ == '__main__':
             last_errors.append(last_error)
             avg_errors.append(avg_error)
 
+
+        print("Features: {}".format(usable_features))
         usable_features = [feature_names[feature] for i,feature in enumerate(TARGET_FEATURES)];
         y_pos = np.arange(len(usable_features));
 
@@ -142,15 +144,15 @@ if __name__ == '__main__':
             avg_errors[i] = avg_errors[i] / max_val;
             last_errors[i] = last_errors[i] / max_val;
 
+        plt.bar(y_pos, avg_errors, width=0.25, alpha=0.8, color='g', label='Average Sample Model');
         plt.bar(y_pos+0.25, model_errors, width=0.25, alpha=0.8, color='b', label='LSTM Model');
-        plt.bar(y_pos, avg_errors, width=0.25, alpha=0.8, color='g', label='Average Model');
-        plt.bar(y_pos-0.25, last_errors, width=0.25, alpha=0.8, color='r', label='Error Model');
+        plt.bar(y_pos-0.25, last_errors, width=0.25, alpha=0.8, color='r', label='Last Sample Model');
 
-        ticklabels = [usable_features[i][0]+usable_features[i][-1] for i in range(len(usable_features))]
-        plt.xticks(y_pos+0.375, ticklabels)
+        ticklabels = [usable_features[i][0:4]+usable_features[i][-1] for i in range(len(usable_features))]
+        plt.xticks(y_pos+0.25, ticklabels)
         plt.xlabel('Feature')
-        plt.ylabel('Relative L1 Error')
-        plt.title('Prediction Method Errors')
+        plt.ylabel('Scaled Average L1 Error')
+        plt.title('Average Test Prediction Method Errors')
         plt.legend()
         plt.tight_layout()
 
