@@ -63,9 +63,14 @@ if __name__ == '__main__':
                 loss.backward()
                 return loss
             optimizer.step(step_closure)
+        with torch.no_grad():
+            validation_data = WeatherDataset(torch.from_numpy(data[TRAIN_END:VALIDATE_END,TARGET_FEATURES]).to(device=DEVICE, dtype=DTYPE), training_data.scaler)
+            # validation
 
     print('Done training, now validating.')
     with torch.no_grad():
+        model.eval()
+
         feature_names = list(WeatherRow.__annotations__.keys())
 
         test_data = WeatherDataset(torch.from_numpy(data[VALIDATE_END:TOTAL_POINTS,TARGET_FEATURES]).to(device=DEVICE, dtype=DTYPE), training_data.scaler)
