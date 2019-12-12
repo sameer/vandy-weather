@@ -19,25 +19,6 @@ samples = []
 colours = []
 
 #
-# for-loop that iterates over the images in the
-# Datasets/ALOI/32/ folder, appending each of them to
-# your list. Each .PNG image should first be loaded into a
-# temporary NDArray.
-#
-# Optional: Resample the image down by a factor of two if you
-# have a slower computer. You can also convert the image from
-# 0-255  to  0.0-1.0  if you'd like, but that will have no
-# effect on the algorithm's results.
-#
-directory = "Datasets/ALOI/32/"
-for fname in os.listdir(directory):
-  fullname = os.path.join(directory, fname)
-  img = misc.imread(fullname)
-  # samples.append(  (img[::2, ::2] / 255.0).reshape(-1)  )   RESAMPLE
-  samples.append( (img).reshape(-1) )
-  colours.append('b') # blue colour
-
-#
 # appends to your list the images
 # in the /Datasets/ALOI/32_i directory.
 #
