@@ -120,3 +120,4 @@ if __name__ == '__main__':
 
             print("The error for {} was {}".format(feature_names[feature], error/len(test_data)));
             print("Average error: {}. This is {}% better than the average metric".format(avg_error/len(test_data), avg_error/error*100-100));
+            print("Last error: {}. This is {}% better than the last value metric".format(last_error/len(test_data), last_error/error*100-100));
