@@ -131,14 +131,15 @@ if __name__ == '__main__':
             last_errors.append(last_error)
             avg_errors.append(avg_error)
 
-        y_pos = np.arange(len(feature_names));
+        usable_features = [feature_names[feature] for i,feature in enumerate(TARGET_FEATURES)];
+        y_pos = np.arange(len(usable_features));
         fig, ax = plt.subplots()
 
         plt.bar(y_pos, model_errors, 0.25, alpha=0.8, color='b');
         plt.bar(y_pos, avg_errors, 0.25, alpha=0.8, color='g');
         plt.bar(y_pos, last_errors, 0.25, alpha=0.8, color='r');
 
-        plt.xticks(y_pos+0.25, feature_names)
+        plt.xticks(y_pos+0.25, usable_features)
         plt.xlabel('Feature')
         plt.ylabel('Average L1 Error')
         plt.title('Prediction Method Errors')

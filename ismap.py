@@ -104,6 +104,8 @@ if __name__ == '__main__':
                 test_results.append(test_batch_results[i])
             print(f'{step*test_loader.batch_size * 100.0 / len(test_data)}% done')
 
+        '''
+
         print('Plotting test actual and predicted')
         for i, feature in enumerate(TARGET_FEATURES):
             plt.title(feature_names[feature])
@@ -112,6 +114,7 @@ if __name__ == '__main__':
             # plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], [np.average(data[idx+VALIDATE_END:idx+VALIDATE_END+WINDOW_SIZE-1, feature], axis=0) for idx in range(len(test_results))])
             plt.savefig(f'test-{feature_names[feature]}.png')
             plt.clf()
+        '''
 
         for i, feature in enumerate(TARGET_FEATURES):
             error = sum([abs(data[idx+VALIDATE_END+WINDOW_SIZE-1, feature] - test_results[idx][i]) for idx in range(len(test_results))])
@@ -130,16 +133,16 @@ if __name__ == '__main__':
             samples.append(data[VALIDATE_END+i:VALIDATE_END+i+WINDOW_SIZE+1,:].reshape(-1) for i in range(len(test_data)));
             colors.append('b' if abs(data[VALIDATE_END+WINDOW_SIZE+i-1, feature] - test_results[i][feature]) < thresh else 'r' for i in range(len(test_data)));
 
-            df = pd.DataFrame( samples );
-            iso = manifold.Isomap(n_neighbors=6, n_components=3);
-            iso.fit(df);
+        df = pd.DataFrame( samples );
+        iso = manifold.Isomap(n_neighbors=6, n_components=3);
+        iso.fit(df);
 
-            my_isomap = iso.transform(df);
+        my_isomap = iso.transform(df);
 
-            fig = plt.figure();
-            ax = fig.add_subplot(111, projection='3d');
-            ax.set_title("ISO transformation 3D");
+        fig = plt.figure();
+        ax = fig.add_subplot(111, projection='3d');
+        ax.set_title("ISO transformation 3D");
 
-            ax.scatter(my_isomap[:,0], my_isomap[:,1], my_isomap[:,2], marker='.', c=colours)
-            plt.show()
+        ax.scatter(my_isomap[:,0], my_isomap[:,1], my_isomap[:,2], marker='.', c=colours)
+        plt.show()
 
