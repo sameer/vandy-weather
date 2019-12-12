@@ -55,9 +55,9 @@ if __name__ == '__main__':
     model.to(DEVICE, dtype=DTYPE)
 
     loss_func = nn.MSELoss()
-    optimizer = torch.optim.AdamW(model.parameters(), lr=0.005)#torch.optim.LBFGS(model.parameters(), lr=0.7)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)#torch.optim.LBFGS(model.parameters(), lr=0.7)
     previous_validation_loss = float('inf')
-    for epoch in range(20):
+    for epoch in range(100):
         for step, batch in enumerate(train_loader):
             def step_closure():
                 optimizer.zero_grad()
@@ -109,13 +109,37 @@ if __name__ == '__main__':
             plt.title(feature_names[feature])
             plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], data[VALIDATE_END+WINDOW_SIZE: TOTAL_POINTS, TARGET_FEATURES[i]])
             plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], [test_results[idx][i] for idx in range(len(test_data))])
-            plt.savefig(f'validate-{feature_names[feature]}.png')
+            # plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], [np.average(data[idx+VALIDATE_END:idx+VALIDATE_END+WINDOW_SIZE-1, feature], axis=0) for idx in range(len(test_results))])
+            plt.savefig(f'test-{feature_names[feature]}.png')
             plt.clf()
 
         for i, feature in enumerate(TARGET_FEATURES):
-             error = sum([abs(data[idx+VALIDATE_END+WINDOW_SIZE-1, TARGET_FEATURES[i]] - test_results[idx][i]) for idx in range(len(test_data))])
-             avg_error = sum([abs(data[idx, TARGET_FEATURES[i]] - np.average(data[idx-WINDOW_SIZE+1:idx, TARGET_FEATURES[i]], axis=0)) for idx in range(VALIDATE_END+WINDOW_SIZE-1, TOTAL_POINTS)]);
+            error = sum([abs(data[idx+VALIDATE_END+WINDOW_SIZE-1, feature] - test_results[idx][i]) for idx in range(len(test_results))])
+            avg_error = sum([abs(data[idx+VALIDATE_END+WINDOW_SIZE-1, feature] - np.average(data[idx+VALIDATE_END:idx+VALIDATE_END+WINDOW_SIZE-1, feature], axis=0)) for idx in range(len(test_results))]);
+            last_error = sum([abs(data[idx+VALIDATE_END+WINDOW_SIZE-1, feature] - data[idx+VALIDATE_END+WINDOW_SIZE-2, feature]) for idx in range(len(test_results))]);
 
-             print("The error for {} was {}".format(feature_names[feature], error/len(test_data)));
-             print("Average error: {}. This is {}% better than the average metric".format(avg_error/len(test_data), avg_error/error*100-100));
+            print("The error for {} was {}".format(feature_names[feature], error/len(test_data)));
+            print("Average error: {}. This is {}% better than the average metric".format(avg_error/len(test_data), avg_error/error*100-100));
+            print("Last error: {}. This is {}% better than the last value metric".format(last_error/len(test_data), last_error/error*100-100));
+
+            samples = []
+            colors = []
+            feature = TARGET_FEATURES[2];
+            thresh = 0.5;
+
+            samples.append(data[VALIDATE_END+i:VALIDATE_END+i+WINDOW_SIZE+1,:].reshape(-1) for i in range(len(test_data)));
+            colors.append('b' if abs(data[VALIDATE_END+WINDOW_SIZE+i-1, feature] - test_results[i][feature]) < thresh else 'r' for i in range(len(test_data)));
+
+            df = pd.DataFrame( samples );
+            iso = manifold.Isomap(n_neighbors=6, n_components=3);
+            iso.fit(df);
+
+            my_isomap = iso.transform(df);
+
+            fig = plt.figure();
+            ax = fig.add_subplot(111, projection='3d');
+            ax.set_title("ISO transformation 3D");
+
+            ax.scatter(my_isomap[:,0], my_isomap[:,1], my_isomap[:,2], marker='.', c=colours)
+            plt.show()
 

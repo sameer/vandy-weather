@@ -104,6 +104,7 @@ if __name__ == '__main__':
                 test_results.append(test_batch_results[i])
             print(f'{step*test_loader.batch_size * 100.0 / len(test_data)}% done')
 
+'''
         print('Plotting test actual and predicted')
         for i, feature in enumerate(TARGET_FEATURES):
             plt.title(feature_names[feature])
@@ -111,8 +112,12 @@ if __name__ == '__main__':
             plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], [test_results[idx][i] for idx in range(len(test_data))])
             # plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], [np.average(data[idx+VALIDATE_END:idx+VALIDATE_END+WINDOW_SIZE-1, feature], axis=0) for idx in range(len(test_results))])
             plt.savefig(f'test-{feature_names[feature]}.png')
-            plt.clf()
+            plt.clf() '''
 
+
+        model_errors = []
+        last_errors = []
+        avg_errors = []
         for i, feature in enumerate(TARGET_FEATURES):
             error = sum([abs(data[idx+VALIDATE_END+WINDOW_SIZE-1, feature] - test_results[idx][i]) for idx in range(len(test_results))])
             avg_error = sum([abs(data[idx+VALIDATE_END+WINDOW_SIZE-1, feature] - np.average(data[idx+VALIDATE_END:idx+VALIDATE_END+WINDOW_SIZE-1, feature], axis=0)) for idx in range(len(test_results))]);
@@ -121,3 +126,20 @@ if __name__ == '__main__':
             print("The error for {} was {}".format(feature_names[feature], error/len(test_data)));
             print("Average error: {}. This is {}% better than the average metric".format(avg_error/len(test_data), avg_error/error*100-100));
             print("Last error: {}. This is {}% better than the last value metric".format(last_error/len(test_data), last_error/error*100-100));
+            model_errors.append(error)
+            last_errors.append(last_error)
+            avg_errors.append(avg_error)
+
+        y_pos = np.arange(len(feature_names));
+        plt.bar(y_pos, model_errors, 0.25, alpha=0.8, color='b');
+        plt.bar(y_pos, avg_errors, 0.25, alpha=0.8, color='g');
+        plt.bar(y_pos, last_errors, 0.25, alpha=0.8, color='r');
+
+        plt.xticks(y_pos+0.25, feature_names)
+        plt.xlabel('Feature')
+        plt.ylabel('Average L1 Error')
+        plt.title('Prediction Method Errors')
+        plt.legend()
+        plt.tight_layout()
+
+        plt.show()
