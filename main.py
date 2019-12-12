@@ -77,7 +77,7 @@ if __name__ == '__main__':
                 current_validation_loss += loss_func(out, batch[:,-1,:]).item() * len(batch)
             current_validation_loss = current_validation_loss / (VALIDATE_END - TRAIN_END)
             model.train()
-            should_stop_early = current_validation_loss > previous_validation_loss or (current_validation_loss - previous_validation_loss < 0.0005)
+            should_stop_early = current_validation_loss > previous_validation_loss
             if should_stop_early:
                 print(f'Stopping early, current validation loss {current_validation_loss} compared to previous validation loss {previous_validation_loss}')
             else:
