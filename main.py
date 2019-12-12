@@ -116,6 +116,7 @@ if __name__ == '__main__':
         for i, feature in enumerate(TARGET_FEATURES):
             error = sum([abs(data[idx+VALIDATE_END+WINDOW_SIZE-1, feature] - test_results[idx][i]) for idx in range(len(test_results))])
             avg_error = sum([abs(data[idx+VALIDATE_END+WINDOW_SIZE-1, feature] - np.average(data[idx+VALIDATE_END:idx+VALIDATE_END+WINDOW_SIZE-1, feature], axis=0)) for idx in range(len(test_results))]);
+            last_error = sum([abs(data[idx+VALIDATE_END+WINDOW_SIZE-1, feature] - data[idx+VALIDATE_END+WINDOW_SIZE-2, feature]) for idx in range(len(test_results))]);
 
             print("The error for {} was {}".format(feature_names[feature], error/len(test_data)));
             print("Average error: {}. This is {}% better than the average metric".format(avg_error/len(test_data), avg_error/error*100-100));
