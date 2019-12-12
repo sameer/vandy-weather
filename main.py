@@ -47,15 +47,17 @@ if __name__ == '__main__':
     training_data = WeatherDataset(torch.from_numpy(data[:TRAIN_END, TARGET_FEATURES]).to(DEVICE, dtype=DTYPE))
     validation_data = WeatherDataset(torch.from_numpy(data[TRAIN_END:VALIDATE_END,TARGET_FEATURES]).to(DEVICE, dtype=DTYPE), training_data.scaler)
 
-    loader = torch.utils.data.DataLoader(training_data, batch_size=BATCH_SIZE, shuffle=True)
+    train_loader = torch.utils.data.DataLoader(training_data, batch_size=BATCH_SIZE, shuffle=True)
+    validation_loader = torch.utils.data.DataLoader(validation_data, batch_size=(VALIDATE_END-TRAIN_END) // 8, shuffle=False)
+
     model = WeatherLSTM(input_dim=len(TARGET_FEATURES), hidden_dim=HIDDEN_DIM, output_dim=len(TARGET_FEATURES))
     model.to(DEVICE, dtype=DTYPE)
 
     loss_func = nn.MSELoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)#torch.optim.LBFGS(model.parameters(), lr=0.7)
-    previous_error = float('inf')
-    for epoch in range(5):
-        for step, batch in enumerate(loader):
+    previous_validation_loss = float('inf')
+    for epoch in range(10):
+        for step, batch in enumerate(train_loader):
             def step_closure():
                 optimizer.zero_grad()
                 # model.initialize()
@@ -67,8 +69,18 @@ if __name__ == '__main__':
             optimizer.step(step_closure)
         with torch.no_grad():
             model.eval()
+            current_validation_loss = 0.0
+            for batch in validation_loader:
+                out = model(batch[:,:-1,:])
+                current_validation_loss += loss_func(out, batch[:,-1,:]).item() * len(batch)
+            current_validation_loss = current_validation_loss / (VALIDATE_END - TRAIN_END)
             model.train()
-            # validation
+            should_stop_early = current_validation_loss > previous_validation_loss
+            if should_stop_early:
+                print(f'Stopping early, current validation loss {current_validation_loss} has increased from previous validation loss {previous_validation_loss}')
+            previous_validation_loss = current_validation_loss
+            if should_stop_early:
+                break
 
     print('Done training, now validating.')
     with torch.no_grad():
