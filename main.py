@@ -55,7 +55,7 @@ if __name__ == '__main__':
     model.to(DEVICE, dtype=DTYPE)
 
     loss_func = nn.MSELoss()
-    optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)#torch.optim.LBFGS(model.parameters(), lr=0.7)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=0.005)#torch.optim.LBFGS(model.parameters(), lr=0.7)
     previous_validation_loss = float('inf')
     for epoch in range(20):
         for step, batch in enumerate(train_loader):
@@ -77,9 +77,9 @@ if __name__ == '__main__':
                 current_validation_loss += loss_func(out, batch[:,-1,:]).item() * len(batch)
             current_validation_loss = current_validation_loss / (VALIDATE_END - TRAIN_END)
             model.train()
-            should_stop_early = current_validation_loss > previous_validation_loss
+            should_stop_early = current_validation_loss > previous_validation_loss or (current_validation_loss - previous_validation_loss < 0.0005)
             if should_stop_early:
-                print(f'Stopping early, current validation loss {current_validation_loss} has increased from previous validation loss {previous_validation_loss}')
+                print(f'Stopping early, current validation loss {current_validation_loss} compared to previous validation loss {previous_validation_loss}')
             else:
                 print(f'Current validation loss is {current_validation_loss}, down from previous {previous_validation_loss}')
             previous_validation_loss = current_validation_loss
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         print('Running model on test dataset')
         test_loader = torch.utils.data.DataLoader(test_data, batch_size=(TOTAL_POINTS-VALIDATE_END) // 8, shuffle=False)
         for step, batch in enumerate(test_loader):
-            test_batch_results = test_data.inverse_transform(model(batch[:,:-1,:]).cpu().numpy())
+            test_batch_results = test_data.scaler.inverse_transform(model(batch[:,:-1,:]).cpu().numpy())
             for i in range(len(test_batch_results)):
                 test_results.append(test_batch_results[i])
             print(f'{step*test_loader.batch_size * 100.0 / len(test_data)}% done')
