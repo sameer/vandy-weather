@@ -56,7 +56,7 @@ if __name__ == '__main__':
     loss_func = nn.MSELoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)#torch.optim.LBFGS(model.parameters(), lr=0.7)
     previous_validation_loss = float('inf')
-    for epoch in range(10):
+    for epoch in range(20):
         for step, batch in enumerate(train_loader):
             def step_closure():
                 optimizer.zero_grad()
