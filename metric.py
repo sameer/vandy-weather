@@ -1,4 +1,5 @@
 import os
+import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -51,6 +52,8 @@ if __name__ == '__main__':
 
     loss_func = nn.MSELoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)#torch.optim.LBFGS(model.parameters(), lr=0.7)
+
+    start_time = time.time();
     for epoch in range(10):
         for step, batch in enumerate(loader):
             def step_closure():
@@ -63,6 +66,7 @@ if __name__ == '__main__':
                 return loss
             optimizer.step(step_closure)
 
+    print("--- {} seconds ---".format(time.time() - start_time))
     with torch.no_grad():
         model = model.cpu()
 
@@ -79,5 +83,5 @@ if __name__ == '__main__':
 
             error = sum([abs(validation_data[idx][-1, i] - validation_results[idx][i]) for idx in range(len(validation_data))])
 
-            print();
+            print("The error was {}".format(error));
             plt.clf()
