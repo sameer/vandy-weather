@@ -140,6 +140,7 @@ if __name__ == '__main__':
             colors.append('b' if abs(data[VALIDATE_END+WINDOW_SIZE+i-1, feature] - test_results[i][feature]) < thresh else 'r')
 
         df = pd.DataFrame.from_records(samples(1::100), coerce_float=True)
+        print("SAMPLES LENGTH IS {}".format(len(samples(1::100))))
         iso = manifold.Isomap(n_neighbors=6, n_components=3);
         iso.fit(df);
 
