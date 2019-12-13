@@ -150,6 +150,6 @@ if __name__ == '__main__':
 
         ax.scatter(my_isomap[:,0], my_isomap[:,1], my_isomap[:,2], marker='.', c=colors)
         plt.title(feature_names[feature]);
-        plt.savefig('isomap');
+        plt.savefig('isomap.png');
         plt.clf();
 
