@@ -140,7 +140,7 @@ if __name__ == '__main__':
 
         for i in range(len(test_data)):
             if i % sampling_rate == 0:
-                samples.append(data[VALIDATE_END+i:VALIDATE_END+i+WINDOW_SIZE+1,:].reshape(-1))
+                samples.append(data[VALIDATE_END+i:VALIDATE_END+i+WINDOW_SIZE+1, 1:].reshape(-1))
                 colors.append('b' if abs(data[VALIDATE_END+WINDOW_SIZE+i-1, feature] - test_results[i][feature]) < thresh else 'r')
 
         df = pd.DataFrame.from_records(samples, coerce_float=True)
