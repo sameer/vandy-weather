@@ -135,8 +135,9 @@ if __name__ == '__main__':
         feature = TARGET_FEATURES[2];
         thresh = 0.8507940004638544;
 
-        samples.append(data[VALIDATE_END+i:VALIDATE_END+i+WINDOW_SIZE+1,:].reshape(-1)) for i in range(len(test_data));
-        colors.append('b' if abs(data[VALIDATE_END+WINDOW_SIZE+i-1, feature] - test_results[i][feature]) < thresh else 'r') for i in range(len(test_data));
+        for i in range(len(test_data)):
+            samples.append(data[VALIDATE_END+i:VALIDATE_END+i+WINDOW_SIZE+1,:].reshape(-1))
+            colors.append('b' if abs(data[VALIDATE_END+WINDOW_SIZE+i-1, feature] - test_results[i][feature]) < thresh else 'r')
 
         df = pd.DataFrame.from_records(samples, coerce_float=True)
         iso = manifold.Isomap(n_neighbors=6, n_components=3);
