@@ -134,7 +134,7 @@ if __name__ == '__main__':
         colors = []
         feature = TARGET_FEATURES[2];
         thresh = 0.8507940004638544;
-        sampling_rate = 1000
+        sampling_rate = 500
 
         for i in range(len(test_data)):
             if i % sampling_rate == 0:
@@ -148,7 +148,6 @@ if __name__ == '__main__':
 
         my_isomap = iso.transform(df);
 
-        '''
 
         fig = plt.figure();
         ax = fig.add_subplot(111, projection='3d');
@@ -158,7 +157,7 @@ if __name__ == '__main__':
         plt.title(feature_names[feature]);
         plt.savefig('isomap.png');
         plt.clf();
-        '''
+
 
         print("SUCCESS");
 
