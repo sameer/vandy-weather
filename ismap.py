@@ -148,17 +148,16 @@ if __name__ == '__main__':
         iso = manifold.Isomap(n_neighbors=6, n_components=3);
         iso.fit(df);
 
-        my_isomap = iso.transform(df);
+        isomap = iso.transform(df);
 
         #2 isomap components
         fig = plt.figure();
         ax = fig.add_subplot(111)
         ax.set_title("ISO transformation 2D")
 
-        ax.scatter(myisomap[:,0], myisomap[:,1], marker='.', c=colors)
+        ax.scatter(isomap[:,0], isomap[:,1], marker='.', c=colors)
         plt.savefig('2disomap.png')
         plt.clf()
-
 
 
         #3 isomap components
@@ -166,7 +165,7 @@ if __name__ == '__main__':
         ax = Axes3D(fig)
         ax.set_title("ISO transformation 3D");
 
-        ax.scatter(my_isomap[:,0], my_isomap[:,1], my_isomap[:,2], marker='.', c=colors)
+        ax.scatter(isomap[:,0], isomap[:,1], isomap[:,2], marker='.', c=colors)
         plt.title(feature_names[feature]);
         plt.savefig('isomap.png');
         plt.clf();
