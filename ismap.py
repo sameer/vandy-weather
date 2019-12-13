@@ -145,6 +145,8 @@ if __name__ == '__main__':
 
         my_isomap = iso.transform(df);
 
+        '''
+
         fig = plt.figure();
         ax = fig.add_subplot(111, projection='3d');
         ax.set_title("ISO transformation 3D");
@@ -153,4 +155,7 @@ if __name__ == '__main__':
         plt.title(feature_names[feature]);
         plt.savefig('isomap.png');
         plt.clf();
+        '''
+
+        print("SUCCESS");
 
