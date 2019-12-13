@@ -130,13 +130,13 @@ if __name__ == '__main__':
             print("Average error: {}. This is {}% better than the average metric".format(avg_error/len(test_data), avg_error/error*100-100));
             print("Last error: {}. This is {}% better than the last value metric".format(last_error/len(test_data), last_error/error*100-100));
 
-            samples = []
-            colors = []
-            feature = TARGET_FEATURES[2];
-            thresh = 0.5;
+        samples = []
+        colors = []
+        feature = TARGET_FEATURES[2];
+        thresh = 0.8507940004638544;
 
-            samples.append(data[VALIDATE_END+i:VALIDATE_END+i+WINDOW_SIZE+1,:].reshape(-1) for i in range(len(test_data)));
-            colors.append('b' if abs(data[VALIDATE_END+WINDOW_SIZE+i-1, feature] - test_results[i][feature]) < thresh else 'r' for i in range(len(test_data)));
+        samples.append(data[VALIDATE_END+i:VALIDATE_END+i+WINDOW_SIZE+1,:].reshape(-1) for i in range(len(test_data)));
+        colors.append('b' if abs(data[VALIDATE_END+WINDOW_SIZE+i-1, feature] - test_results[i][feature]) < thresh else 'r' for i in range(len(test_data)));
 
         df = pd.DataFrame( samples );
         iso = manifold.Isomap(n_neighbors=6, n_components=3);
@@ -148,7 +148,7 @@ if __name__ == '__main__':
         ax = fig.add_subplot(111, projection='3d');
         ax.set_title("ISO transformation 3D");
 
-        ax.scatter(my_isomap[:,0], my_isomap[:,1], my_isomap[:,2], marker='.', c=colours)
+        ax.scatter(my_isomap[:,0], my_isomap[:,1], my_isomap[:,2], marker='.', c=colors)
         plt.title(feature_names[feature]);
         plt.savefig('isomap');
         plt.clf();
