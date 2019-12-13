@@ -134,15 +134,15 @@ if __name__ == '__main__':
         colors = []
         feature = TARGET_FEATURES[2];
         thresh = 0.8507940004638544;
+        sampling_rate = 1000
 
         for i in range(len(test_data)):
-            samples.append(data[VALIDATE_END+i:VALIDATE_END+i+WINDOW_SIZE+1,:].reshape(-1))
-            colors.append('b' if abs(data[VALIDATE_END+WINDOW_SIZE+i-1, feature] - test_results[i][feature]) < thresh else 'r')
+            if i % sampling_rate == 0:
+                samples.append(data[VALIDATE_END+i:VALIDATE_END+i+WINDOW_SIZE+1,:].reshape(-1))
+                colors.append('b' if abs(data[VALIDATE_END+WINDOW_SIZE+i-1, feature] - test_results[i][feature]) < thresh else 'r')
 
-        subsamples = np.array(samples)
-        subsamples = subsamples[1::10000]
-        df = pd.DataFrame.from_records(list(subsamples), coerce_float=True)
-        print("SAMPLES LENGTH IS {}".format(len(subsamples)))
+        df = pd.DataFrame.from_records(samples, coerce_float=True)
+        print("SAMPLES LENGTH IS {}".format(len(samples)))
         iso = manifold.Isomap(n_neighbors=6, n_components=3);
         iso.fit(df);
 
