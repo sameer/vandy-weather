@@ -144,5 +144,7 @@ if __name__ == '__main__':
         ax.set_title("ISO transformation 3D");
 
         ax.scatter(my_isomap[:,0], my_isomap[:,1], my_isomap[:,2], marker='.', c=colours)
-        plt.show()
+        plt.title(feature_names[feature]);
+        plt.savefig('isomap');
+        plt.clf();
 

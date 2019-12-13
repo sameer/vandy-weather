@@ -132,7 +132,6 @@ if __name__ == '__main__':
             avg_errors.append(avg_error)
 
 
-        print("Features: {}".format(usable_features))
         usable_features = [feature_names[feature] for i,feature in enumerate(TARGET_FEATURES)];
         y_pos = np.arange(len(usable_features));
 
