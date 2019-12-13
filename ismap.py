@@ -140,7 +140,7 @@ if __name__ == '__main__':
             colors.append('b' if abs(data[VALIDATE_END+WINDOW_SIZE+i-1, feature] - test_results[i][feature]) < thresh else 'r')
 
         subsamples = np.array(samples)
-        subsamples = subsamples[1::100]
+        subsamples = subsamples[1::1000]
         df = pd.DataFrame.from_records(subsamples, coerce_float=True)
         print("SAMPLES LENGTH IS {}".format(len(subsamples)))
         iso = manifold.Isomap(n_neighbors=6, n_components=3);
