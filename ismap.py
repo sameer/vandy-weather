@@ -13,6 +13,8 @@ from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END, BATCH_SI
 import pandas as pd
 from scipy import misc
 from sklearn import manifold
+from mpl_toolkits.mplot3d import Axes3D
+
 
 import os
 
@@ -150,7 +152,7 @@ if __name__ == '__main__':
 
 
         fig = plt.figure();
-        ax = fig.add_subplot(111, projection='3d');
+        ax = Axes3D(fig)
         ax.set_title("ISO transformation 3D");
 
         ax.scatter(my_isomap[:,0], my_isomap[:,1], my_isomap[:,2], marker='.', c=colors)
