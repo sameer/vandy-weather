@@ -54,7 +54,7 @@ if __name__ == '__main__':
     model = WeatherLSTM(input_dim=len(TARGET_FEATURES), hidden_dim=HIDDEN_DIM, output_dim=len(TARGET_FEATURES))
     model.to(DEVICE, dtype=DTYPE)
 
-    loss_func = nn.L1Loss()
+    loss_func = nn.MSELoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)#torch.optim.LBFGS(model.parameters(), lr=0.7)
     previous_validation_loss = float('inf')
     for epoch in range(100):
@@ -104,6 +104,7 @@ if __name__ == '__main__':
                 test_results.append(test_batch_results[i])
             print(f'{step*test_loader.batch_size * 100.0 / len(test_data)}% done')
 
+        '''
         print('Plotting test actual and predicted')
         for i, feature in enumerate(TARGET_FEATURES):
             plt.title(feature_names[feature])
@@ -112,6 +113,7 @@ if __name__ == '__main__':
             # plt.plot(data[VALIDATE_END: TOTAL_POINTS - WINDOW_SIZE, 1], [np.average(data[idx+VALIDATE_END:idx+VALIDATE_END+WINDOW_SIZE-1, feature], axis=0) for idx in range(len(test_results))])
             plt.savefig(f'test-{feature_names[feature]}.png')
             plt.clf()
+        '''
 
         model_errors = []
         last_errors = []
