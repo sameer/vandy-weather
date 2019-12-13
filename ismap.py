@@ -10,6 +10,11 @@ from weather_format import WeatherDataset, WeatherRow
 from model import WeatherLSTM
 from config import WINDOW_SIZE, DEVICE, DTYPE, TRAIN_END, VALIDATE_END, BATCH_SIZE, HIDDEN_DIM, TOTAL_POINTS, REPRODUCIBLE
 
+import pandas as pd
+from scipy import misc
+from sklearn import manifold
+
+import os
 
 if __name__ == '__main__':
     if not os.path.isfile(f'{TORCH_FILENAME}.tar.xz'):
