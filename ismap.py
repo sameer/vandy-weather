@@ -150,7 +150,18 @@ if __name__ == '__main__':
 
         my_isomap = iso.transform(df);
 
+        #2 isomap components
+        fig = plt.figure();
+        ax = fig.add_subplot(111)
+        ax.set_title("ISO transformation 2D")
 
+        ax.scatter(myisomap[:,0], myisomap[:,1], marker='.', c=colors)
+        plt.savefig('2disomap.png')
+        plt.clf()
+
+
+
+        #3 isomap components
         fig = plt.figure();
         ax = Axes3D(fig)
         ax.set_title("ISO transformation 3D");
