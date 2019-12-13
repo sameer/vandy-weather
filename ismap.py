@@ -134,9 +134,9 @@ if __name__ == '__main__':
 
         samples = []
         colors = []
-        feature = TARGET_FEATURES[5];
+        feature = TARGET_FEATURES[1];
         thresh = 0.8507940004638544;
-        sampling_rate = 500
+        sampling_rate = 100
 
         for i in range(len(test_data)):
             if i % sampling_rate == 0:
